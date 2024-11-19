@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'screens/login_screen.dart';
+import 'package:garagefinder/screens/login_screen2.dart';
+// import 'screens/login_screen.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -10,12 +11,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: 'Flutter Dummy Login',
-      theme: ThemeData(
-        primarySwatch: Colors.red,
-      ),
-      home: LoginScreen(),
+      // theme: ThemeData(
+      //   primarySwatch: Colors.red,
+      // ),
+      home: LoginPage(),
     );
   }
 }

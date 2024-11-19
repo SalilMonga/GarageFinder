@@ -6,8 +6,8 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.red,
-      title: const Text('App Header'),
+      backgroundColor: Colors.red, //update with hex of our color palate
+      title: const Text('Garage Finder'),
       centerTitle: true,
     );
   }
