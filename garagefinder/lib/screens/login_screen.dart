@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../widgets/header.dart';
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -29,7 +31,9 @@ class _LoginScreenState extends State<LoginScreen> {
   void _validateInputs() {
     setState(() {
       _isLoginButtonEnabled = _emailController.text.isNotEmpty &&
-          _passwordController.text.isNotEmpty;
+          _passwordController.text.isNotEmpty &&
+          isValidEmail(_emailController.text) &&
+          _emailError == null;
     });
   }
 
@@ -41,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Header(), // Reusing the red header
+      appBar: const Header(), // Reusing the red header
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -52,7 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   controller: _emailController,
                   decoration: InputDecoration(
                     labelText: 'Username (Email)',
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
                     errorText: _emailError,
                   ),
                   keyboardType: TextInputType.emailAddress,
