@@ -45,33 +45,36 @@ class _SettingsPageState extends State<SettingsPage> {
               leading: Radio<ThemeMode>(
                 value: ThemeMode.system,
                 groupValue: currentMode,
-                onChanged: (value) {
-                  themeNotifier.setThemeMode(value!);
-                  Navigator.pop(context); // Close the modal
-                },
+                onChanged: null,
               ),
+              onTap: () {
+                themeNotifier.setThemeMode(ThemeMode.system);
+                Navigator.pop(context); // Close the modal
+              },
             ),
             ListTile(
               title: const Text('Always Light'),
               leading: Radio<ThemeMode>(
                 value: ThemeMode.light,
                 groupValue: currentMode,
-                onChanged: (value) {
-                  themeNotifier.setThemeMode(value!);
-                  Navigator.pop(context); // Close the modal
-                },
+                onChanged: null,
               ),
+              onTap: () {
+                themeNotifier.setThemeMode(ThemeMode.light);
+                Navigator.pop(context); // Close the modal
+              },
             ),
             ListTile(
               title: const Text('Always Dark'),
               leading: Radio<ThemeMode>(
                 value: ThemeMode.dark,
                 groupValue: currentMode,
-                onChanged: (value) {
-                  themeNotifier.setThemeMode(value!);
-                  Navigator.pop(context); // Close the modal
-                },
+                onChanged: null,
               ),
+              onTap: () {
+                themeNotifier.setThemeMode(ThemeMode.dark);
+                Navigator.pop(context); // Close the modal
+              },
             ),
           ],
         );

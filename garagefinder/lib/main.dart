@@ -21,22 +21,23 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeNotifier = Provider.of<ThemeNotifier>(context);
-    return MaterialApp(
-      title: 'Garage Finder App',
-      // initialRoute: '/login', // The first screen to load
-      initialRoute: '/organizations', // Set current test screen and uncomment
-      theme: themeNotifier.lightTheme, // Light Theme
-      darkTheme: themeNotifier.darkTheme, // Dark Theme
-      themeMode: themeNotifier.themeMode, // Current Theme Mode
-      routes: {
-        '/login': (context) => const LoginPage(),
-        '/signup': (context) => const SignUpPage(),
-        '/organizations': (context) => const OrganizationsPage(),
-        '/settings': (context) => const SettingsPage(),
-        '/garage': (context) => const GarageLayoutPage(),
-        // Add other screens here as needed
-      },
-    );
+    return Consumer<ThemeNotifier>(builder: (context, themeNotifier, child) {
+      return MaterialApp(
+        title: 'Garage Finder App',
+        // initialRoute: '/login', // The first screen to load
+        initialRoute: '/organizations', // Set current test screen and uncomment
+        theme: themeNotifier.lightTheme, // Light Theme
+        darkTheme: themeNotifier.darkTheme, // Dark Theme
+        themeMode: themeNotifier.themeMode, // Current Theme Mode
+        routes: {
+          '/login': (context) => const LoginPage(),
+          '/signup': (context) => const SignUpPage(),
+          '/organizations': (context) => const OrganizationsPage(),
+          '/settings': (context) => const SettingsPage(),
+          '/garage': (context) => const GarageLayoutPage(),
+          // Add other screens here as needed
+        },
+      );
+    });
   }
 }

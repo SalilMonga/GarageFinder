@@ -6,6 +6,7 @@ class ThemeNotifier extends ChangeNotifier {
   ThemeMode get themeMode => _themeMode;
 
   void setThemeMode(ThemeMode mode) {
+    if (_themeMode == mode) return;
     _themeMode = mode;
     notifyListeners();
   }
@@ -23,6 +24,12 @@ class ThemeNotifier extends ChangeNotifier {
           backgroundColor: Colors.white,
           foregroundColor: Colors.black,
           elevation: 0,
+        ),
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          backgroundColor: Colors.white,
+          selectedItemColor: Colors.black, // Highlighted icon in light mode
+          unselectedItemColor:
+              Colors.grey, // Non-highlighted icons in light mode
         ),
         colorScheme: const ColorScheme.light(
           primary: Colors.black,
@@ -43,6 +50,12 @@ class ThemeNotifier extends ChangeNotifier {
           backgroundColor: Colors.black,
           foregroundColor: Colors.white,
           elevation: 0,
+        ),
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          backgroundColor: Colors.black,
+          selectedItemColor: Colors.white, // Highlighted icon in dark mode
+          unselectedItemColor:
+              Colors.grey, // Non-highlighted icons in dark mode
         ),
         colorScheme: const ColorScheme.dark(
           primary: Colors.white,
