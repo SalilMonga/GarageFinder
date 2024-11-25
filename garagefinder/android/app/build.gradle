@@ -8,7 +8,7 @@ plugins {
 android {
     namespace = "com.example.garagefinder"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "26.1.10909125"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -24,10 +24,10 @@ android {
         applicationId = "com.example.garagefinder"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
-        versionCode = flutter.versionCode
-        versionName = flutter.versionName
+    minSdk = 21
+    targetSdk = flutter.targetSdkVersion
+    versionCode = 1 // Set this to any integer you prefer, e.g., 1
+    versionName = "1.0" // Set this to any version name you prefer, e.g., "1.0"
     }
 
     buildTypes {
