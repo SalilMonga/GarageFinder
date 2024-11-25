@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:garagefinder/screens/login_screen2.dart';
 import 'package:garagefinder/screens/map_test_screen.dart';
+import 'package:garagefinder/screens/Parking_Map.dart';
 // import 'screens/login_screen.dart';
 
 void main() {
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
       // theme: ThemeData(
       //   primarySwatch: Colors.red,
       // ),
-      home: LoginPage(),
+      home: ParkingMap(),
     );
   }
 }
