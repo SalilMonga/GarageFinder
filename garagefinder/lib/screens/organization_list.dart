@@ -20,7 +20,8 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
     if (index == 0) {
       // Navigator.pushNamed(context, '/organizations'); // Navigate to Home
     } else if (index == 1) {
-      // Navigator.pushNamed(context, '/favorites'); // Navigate to Favorites
+      //EXPERIMENTAL!
+      Navigator.pushNamed(context, '/garage'); // Navigate to Favorites
     } else if (index == 2) {
       Navigator.pushNamed(context, '/settings'); // Navigate to Settings
     }
