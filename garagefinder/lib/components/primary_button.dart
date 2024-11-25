@@ -16,14 +16,15 @@ class PrimaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final buttonStyle = isOutlined
         ? OutlinedButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 16),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
-            side: const BorderSide(color: Colors.black),
-            foregroundColor: Colors.black,
+            side: BorderSide(color: isDarkMode ? Colors.white : Colors.black),
+            foregroundColor: isDarkMode ? Colors.white : Colors.black,
           )
         : ElevatedButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 16),

@@ -1,8 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:garagefinder/components/primary_button.dart';
 
-class OrganizationsPage extends StatelessWidget {
+class OrganizationsPage extends StatefulWidget {
   const OrganizationsPage({super.key});
+
+  @override
+  State<OrganizationsPage> createState() => _OrganizationsPageState();
+}
+
+class _OrganizationsPageState extends State<OrganizationsPage> {
+  int _currentIndex = 0; // Track the currently selected tab
+
+  void _onTabTapped(int index) {
+    setState(() {
+      _currentIndex = index; // Update the current index
+    });
+
+    // Navigate based on the tapped index
+    if (index == 0) {
+      // Navigator.pushNamed(context, '/organizations'); // Navigate to Home
+    } else if (index == 1) {
+      // Navigator.pushNamed(context, '/favorites'); // Navigate to Favorites
+    } else if (index == 2) {
+      Navigator.pushNamed(context, '/settings'); // Navigate to Settings
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -116,6 +138,9 @@ class OrganizationsPage extends StatelessWidget {
       ),
       // Bottom Navigation Bar
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex, // Highlight the active tab
+        //TODO: ontapping the selected screen icon again, just go to the top of the screen.
+        onTap: _onTabTapped,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -123,15 +148,13 @@ class OrganizationsPage extends StatelessWidget {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.star),
-            label: 'Favorites',
+            label: 'Favorite',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
+            icon: Icon(Icons.settings),
+            label: 'Settings',
           ),
         ],
-        currentIndex: 0,
-        onTap: (index) {},
       ),
     );
   }

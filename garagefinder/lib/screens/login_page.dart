@@ -89,10 +89,11 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       PrimaryButton(
-                        text: 'Sign Up',
-                        isOutlined: true,
-                        onPressed: () {},
-                      ),
+                          text: 'Sign Up',
+                          isOutlined: true,
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/signup');
+                          }),
                       PrimaryButton(
                         text: 'Login',
                         onPressed: _validateAndLogin,
