@@ -21,7 +21,7 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
       // Navigator.pushNamed(context, '/organizations'); // Navigate to Home
     } else if (index == 1) {
       //EXPERIMENTAL!
-      Navigator.pushNamed(context, '/garage'); // Navigate to Favorites
+      // Navigator.pushNamed(context, '/garage'); // Navigate to Favorites
     } else if (index == 2) {
       Navigator.pushNamed(context, '/settings'); // Navigate to Settings
     }
@@ -165,9 +165,10 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
       String title, String location, BuildContext context) {
     return GestureDetector(
       onTap: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Tapped on $title')),
-        );
+        Navigator.pushNamed(context, '/parking');
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(content: Text('Tapped on $title')),
+        // );
       },
       child: Container(
         width: 200,

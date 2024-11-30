@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class GarageLayoutPage extends StatefulWidget {
-  const GarageLayoutPage({Key? key}) : super(key: key);
+  const GarageLayoutPage({super.key});
 
   @override
   State<GarageLayoutPage> createState() => _GarageLayoutPageState();
@@ -35,13 +35,13 @@ class _GarageLayoutPageState extends State<GarageLayoutPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      // backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        // backgroundColor: Colors.white,
         elevation: 0,
         title: const Text(
           'Garage Layout',
-          style: TextStyle(color: Colors.black),
+          // style: TextStyle(color: Colors.black),
         ),
         centerTitle: true,
         leading: IconButton(
@@ -336,12 +336,12 @@ class _GarageLayoutPageState extends State<GarageLayoutPage> {
                             });
                             Navigator.pop(context);
                           },
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: Colors.black),
+                          ),
                           child: const Text(
                             'Clear',
                             style: TextStyle(color: Colors.black),
-                          ),
-                          style: OutlinedButton.styleFrom(
-                            side: const BorderSide(color: Colors.black),
                           ),
                         ),
                       ),

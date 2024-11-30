@@ -37,47 +37,49 @@ class _SettingsPageState extends State<SettingsPage> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
       ),
       builder: (BuildContext context) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              title: const Text('System Default'),
-              leading: Radio<ThemeMode>(
-                value: ThemeMode.system,
-                groupValue: currentMode,
-                onChanged: null,
+        return StatefulBuilder(builder: (context, setState) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: const Text('System Default'),
+                leading: Radio<ThemeMode>(
+                  value: ThemeMode.system,
+                  groupValue: currentMode,
+                  onChanged: null,
+                ),
+                onTap: () {
+                  themeNotifier.setThemeMode(ThemeMode.system);
+                  Navigator.pop(context); // Close the modal
+                },
               ),
-              onTap: () {
-                themeNotifier.setThemeMode(ThemeMode.system);
-                Navigator.pop(context); // Close the modal
-              },
-            ),
-            ListTile(
-              title: const Text('Always Light'),
-              leading: Radio<ThemeMode>(
-                value: ThemeMode.light,
-                groupValue: currentMode,
-                onChanged: null,
+              ListTile(
+                title: const Text('Always Light'),
+                leading: Radio<ThemeMode>(
+                  value: ThemeMode.light,
+                  groupValue: currentMode,
+                  onChanged: null,
+                ),
+                onTap: () {
+                  themeNotifier.setThemeMode(ThemeMode.light);
+                  Navigator.pop(context); // Close the modal
+                },
               ),
-              onTap: () {
-                themeNotifier.setThemeMode(ThemeMode.light);
-                Navigator.pop(context); // Close the modal
-              },
-            ),
-            ListTile(
-              title: const Text('Always Dark'),
-              leading: Radio<ThemeMode>(
-                value: ThemeMode.dark,
-                groupValue: currentMode,
-                onChanged: null,
+              ListTile(
+                title: const Text('Always Dark'),
+                leading: Radio<ThemeMode>(
+                  value: ThemeMode.dark,
+                  groupValue: currentMode,
+                  onChanged: null,
+                ),
+                onTap: () {
+                  themeNotifier.setThemeMode(ThemeMode.dark);
+                  Navigator.pop(context); // Close the modal
+                },
               ),
-              onTap: () {
-                themeNotifier.setThemeMode(ThemeMode.dark);
-                Navigator.pop(context); // Close the modal
-              },
-            ),
-          ],
-        );
+            ],
+          );
+        });
       },
     );
   }
