@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ThemeNotifier extends ChangeNotifier {
-  ThemeMode _themeMode = ThemeMode.system; // Default to system theme
+  ThemeMode _themeMode = ThemeMode.light;
 
   ThemeMode get themeMode => _themeMode;
 
@@ -11,56 +11,62 @@ class ThemeNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Light Theme Colors
-  static const Color primaryLightColor = Color(0xFFAEDFF7); // Pastel blue
-  static const Color backgroundColor = Colors.grey; // Light gray background
+  // Updated Light Theme Colors
+  static const Color primaryLightColor =
+      Color.fromARGB(255, 142, 176, 243); // Soft pastel blue
+  static const Color secondaryLightColor =
+      Color(0xFF003366); // Contrast dark blue
+  static const Color lightTextColor = Colors.black87; // Dark text for contrast
+  static const Color lightCardColor = Colors.white; // Bright white for cards
+  static const Color lightBackgroundColor =
+      Color(0xFFF4F9FC); // Soft light background
+  static const Color lightShadowColor =
+      Colors.black; // Shadow color for light theme
+  static const Color lightUnselectedItemColor =
+      Colors.grey; // Unselected item color for light theme
 
-// Dark Theme Colors
-  static const Color primaryDarkColor = Color(0xFF004B8D); // Darkish blue
+  // Updated Dark Theme Colors
+  static const Color primaryDarkColor = Color(0xFF004B8D); // Rich dark blue
+  static const Color secondaryDarkColor = Color(0xFF001F3F); // Very dark blue
+  static const Color darkTextColor = Colors.white; // White for text
+  static const Color darkCardColor = Color(0xFF1A1A1A); // Slightly lighter dark
+  static const Color darkBackgroundColor =
+      Color(0xFF121212); // Deep dark background
+  static const Color darkShadowColor =
+      Colors.black; // Shadow color for dark theme
+  static const Color darkUnselectedItemColor =
+      Colors.grey; // Unselected item color for dark theme
+
   // Light Theme
   ThemeData get lightTheme => ThemeData(
         brightness: Brightness.light,
         colorScheme: const ColorScheme.light(
-          primary: primaryLightColor, // Primary color
-          surface: Colors.white, // Card background
-          onPrimary: Colors.white, // Text/icons on primary
-          onSecondary: Colors.white, // Text/icons on accent
-          onSurface: Colors.black87, // Text on cards/surfaces
+          primary: primaryLightColor,
+          surface: lightCardColor,
+          onPrimary: Colors.white,
         ),
-        scaffoldBackgroundColor: Colors.grey[50],
         appBarTheme: const AppBarTheme(
           backgroundColor: primaryLightColor,
           foregroundColor: Colors.white,
           elevation: 2,
         ),
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-          backgroundColor: Colors.white,
+          backgroundColor: lightBackgroundColor,
           selectedItemColor: primaryLightColor,
-          unselectedItemColor: backgroundColor,
-          elevation: 4,
+          unselectedItemColor: lightUnselectedItemColor,
         ),
-        cardTheme: CardTheme(
-          color: Colors.white,
-          shadowColor: Colors.grey[300],
+        cardTheme: const CardTheme(
+          color: lightCardColor,
+          shadowColor: lightShadowColor,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.all(Radius.circular(16)),
           ),
-          elevation: 2,
         ),
         textTheme: const TextTheme(
           titleLarge: TextStyle(
-            fontSize: 20,
-            color: Colors.black87,
-            fontWeight: FontWeight.bold,
-          ),
-          bodyLarge: TextStyle(
-            fontSize: 16,
-            color: Colors.black87,
-          ),
-          bodyMedium: TextStyle(
-            fontSize: 14,
-            color: Colors.black54,
-          ),
+              fontSize: 20, color: lightTextColor, fontWeight: FontWeight.bold),
+          bodyLarge: TextStyle(fontSize: 16, color: lightTextColor),
+          bodyMedium: TextStyle(fontSize: 14, color: lightUnselectedItemColor),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
@@ -72,65 +78,38 @@ class ThemeNotifier extends ChangeNotifier {
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
           ),
         ),
-        outlinedButtonTheme: OutlinedButtonThemeData(
-          style: OutlinedButton.styleFrom(
-            foregroundColor: primaryLightColor,
-            side: const BorderSide(color: primaryLightColor),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-          ),
-        ),
-        inputDecorationTheme: InputDecorationTheme(
-          fillColor: Colors.grey[200],
-          filled: true,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: primaryLightColor),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: primaryLightColor, width: 2),
-          ),
-          hintStyle: const TextStyle(color: Colors.grey),
-        ),
       );
 
   // Dark Theme
   ThemeData get darkTheme => ThemeData(
         brightness: Brightness.dark,
-        colorScheme: ColorScheme.dark(
+        colorScheme: const ColorScheme.dark(
           primary: primaryDarkColor,
-          surface: Colors.grey[850]!, // Card background
+          surface: darkCardColor,
           onPrimary: Colors.white,
-          onSecondary: Colors.white,
-          onSurface: Colors.white,
         ),
-        scaffoldBackgroundColor: Colors.grey[900], // Dark gray background
         appBarTheme: const AppBarTheme(
-          backgroundColor: primaryDarkColor, // Slightly lighter gray
+          backgroundColor: primaryDarkColor,
           foregroundColor: Colors.white,
           elevation: 2,
         ),
-        bottomNavigationBarTheme: BottomNavigationBarThemeData(
-            backgroundColor: Colors.grey[900], // Match background color
-            selectedItemColor: primaryDarkColor,
-            unselectedItemColor: backgroundColor),
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          backgroundColor: darkBackgroundColor,
+          selectedItemColor: primaryDarkColor,
+          unselectedItemColor: darkUnselectedItemColor,
+        ),
+        cardTheme: const CardTheme(
+          color: darkCardColor,
+          shadowColor: darkShadowColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(16)),
+          ),
+        ),
         textTheme: const TextTheme(
           titleLarge: TextStyle(
-            fontSize: 20,
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-          bodyLarge: TextStyle(
-            fontSize: 16,
-            color: Colors.white,
-          ),
-          bodyMedium: TextStyle(
-            fontSize: 14,
-            color: backgroundColor, // Use lighter text for less emphasis
-          ),
+              fontSize: 20, color: darkTextColor, fontWeight: FontWeight.bold),
+          bodyLarge: TextStyle(fontSize: 16, color: darkTextColor),
+          bodyMedium: TextStyle(fontSize: 14, color: darkUnselectedItemColor),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
@@ -141,37 +120,6 @@ class ThemeNotifier extends ChangeNotifier {
             ),
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
           ),
-        ),
-        outlinedButtonTheme: OutlinedButtonThemeData(
-          style: OutlinedButton.styleFrom(
-            foregroundColor: primaryDarkColor,
-            side: const BorderSide(color: Colors.teal),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-          ),
-        ),
-        cardTheme: CardTheme(
-          color: Colors.grey[850], // Slightly lighter than the background
-          shadowColor: Colors.black,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          elevation: 2,
-        ),
-        inputDecorationTheme: InputDecorationTheme(
-          fillColor: Colors.grey[800], // Darker gray for input fields
-          filled: true,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Colors.teal),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: primaryDarkColor, width: 2),
-          ),
-          hintStyle: const TextStyle(color: Colors.grey),
         ),
       );
 }

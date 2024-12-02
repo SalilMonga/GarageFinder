@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:garagefinder/components/theme_notifier.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
+import '../components/primary_button.dart';
 import '../components/locations.dart' as locations;
 
 class ParkingMap extends StatefulWidget {
@@ -11,14 +12,9 @@ class ParkingMap extends StatefulWidget {
 }
 
 class _ParkingMapState extends State<ParkingMap> {
-  // GoogleMapController? _mapController;
   final Map<String, Marker> _markers = {};
 
   Future<void> _onMapCreated(GoogleMapController controller) async {
-    // setState(() {
-    //   _mapController = controller;
-    // });
-
     try {
       final parkingGarages = await locations.getParkingGarages();
       setState(() {
@@ -49,8 +45,6 @@ class _ParkingMapState extends State<ParkingMap> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('CSUN Parking Map'),
-        // backgroundColor: Colors.white,
-        // foregroundColor: Colors.black,
         elevation: 1,
       ),
       body: SingleChildScrollView(
@@ -65,30 +59,55 @@ class _ParkingMapState extends State<ParkingMap> {
           ],
         ),
       ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 0, // Highlight "Home" or update based on your app logic
+        onTap: (index) {
+          if (index == 1) {
+            // Navigator.pushNamed(context, '/favorites');
+          } else if (index == 2) {
+            Navigator.pushNamed(context, '/settings');
+          }
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.star),
+            label: 'Favorites',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildHeaderSection() {
-    return const Padding(
-      padding: EdgeInsets.all(16.0),
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
       child: Row(
         children: [
-          CircleAvatar(
+          const CircleAvatar(
             radius: 24,
-            backgroundColor: Colors.grey,
-            child: Icon(Icons.directions_car, color: Colors.white),
+            backgroundColor: ThemeNotifier.lightUnselectedItemColor,
+            child:
+                Icon(Icons.directions_car, color: ThemeNotifier.darkTextColor),
           ),
-          SizedBox(width: 16),
+          const SizedBox(width: 16),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'CSUN Parking',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: Theme.of(context).textTheme.bodyLarge,
               ),
               Text(
                 'Parking Structures Map',
-                style: TextStyle(fontSize: 14, color: Colors.grey),
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
             ],
           ),
@@ -123,25 +142,10 @@ class _ParkingMapState extends State<ParkingMap> {
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
         children: [
-          // ElevatedButton(
-          //   onPressed: () {},
-          //   child: const Text('Filter Map'),
-          // ),
-          // const SizedBox(height: 8),
-          // ElevatedButton(
-          //   onPressed: () {},
-          //   child: const Text('Share Map'),
-          // ),
           const SizedBox(height: 8),
-          ElevatedButton(
-            onPressed: () => {Navigator.pushNamed(context, '/garage')},
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.black,
-            ),
-            child: const Text(
-              'Navigate to CSUN',
-              style: TextStyle(color: Colors.white),
-            ),
+          PrimaryButton(
+            text: 'Navigate to CSUN',
+            onPressed: () => Navigator.pushNamed(context, '/garage'),
           ),
         ],
       ),
@@ -154,9 +158,9 @@ class _ParkingMapState extends State<ParkingMap> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Parking Structures',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: Theme.of(context).textTheme.bodyLarge,
           ),
           const SizedBox(height: 16),
           Row(
@@ -174,7 +178,17 @@ class _ParkingMapState extends State<ParkingMap> {
   Widget _buildParkingCard(String status, String name, String capacity) {
     return Expanded(
       child: Card(
-        elevation: 2,
+        color: Theme.of(context).cardTheme.color, // Use theme card color
+        shadowColor:
+            Theme.of(context).cardTheme.shadowColor, // Use theme shadow color
+        elevation: 4, // Increased elevation for a more prominent shadow
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(
+            color: Colors.grey.shade300, // Subtle border for better contrast
+            width: 1,
+          ),
+        ),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -182,7 +196,10 @@ class _ParkingMapState extends State<ParkingMap> {
             children: [
               Container(
                 height: 100,
-                color: Colors.grey.shade200,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200, // Light gray for contrast
+                  borderRadius: BorderRadius.circular(12), // Rounded corners
+                ),
                 child: const Center(
                   child: Text(
                     'Image of parking structure',
@@ -193,19 +210,19 @@ class _ParkingMapState extends State<ParkingMap> {
               const SizedBox(height: 8),
               Text(
                 name,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
               Text(
                 'Capacity: $capacity',
-                style: const TextStyle(fontSize: 14, color: Colors.grey),
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
               Text(
                 status,
                 style: TextStyle(
                   fontSize: 14,
+                  fontWeight: FontWeight.bold,
                   color: status == 'Open' ? Colors.green : Colors.red,
                 ),
               ),
@@ -217,16 +234,16 @@ class _ParkingMapState extends State<ParkingMap> {
   }
 
   Widget _buildAdditionalInfoSection() {
-    return const Padding(
-      padding: EdgeInsets.all(16.0),
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Additional Info',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: Theme.of(context).textTheme.bodyLarge,
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Row(
             children: [
               Expanded(
@@ -234,16 +251,16 @@ class _ParkingMapState extends State<ParkingMap> {
                   children: [
                     Text(
                       'Parking Rates',
-                      style: TextStyle(fontSize: 14),
+                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
-                    Text(
+                    const Text(
                       'Rates are based on location',
                       style: TextStyle(color: Colors.grey),
                     ),
                   ],
                 ),
               ),
-              Expanded(
+              const Expanded(
                 child: Column(
                   children: [
                     Text(

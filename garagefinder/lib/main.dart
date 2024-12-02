@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:garagefinder/components/theme_notifier.dart';
-import 'package:garagefinder/screens/garage_layout.dart';
+import 'package:garagefinder/screens/parking_layout/garage_layout_page.dart';
 import 'package:garagefinder/screens/login_page.dart';
 import 'package:garagefinder/screens/parking_map.dart';
 import 'package:garagefinder/screens/signup_page.dart';
@@ -29,8 +29,8 @@ class MyApp extends StatelessWidget {
           builder: (context, _) {
             return MaterialApp(
               title: 'Garage Finder App',
-              initialRoute: '/login', // The first screen to load
-              // initialRoute: '/parking', // Set current test screen and uncomment
+              // initialRoute: '/login', // The first screen to load
+              initialRoute: '/parking', // Set current test screen and uncomment
               theme: themeNotifier.lightTheme, // Light Theme
               darkTheme: themeNotifier.darkTheme, // Dark Theme
               themeMode: themeNotifier.themeMode, // Current Theme Mode
