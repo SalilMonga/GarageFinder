@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 
-class SearchBar extends StatelessWidget {
+class CustomSearchBar extends StatelessWidget {
   final TextEditingController controller;
   final FocusNode focusNode;
   final ValueChanged<String> onChanged;
   final VoidCallback onClear;
 
-  const SearchBar({
-    Key? key,
+  const CustomSearchBar({
+    super.key,
     required this.controller,
     required this.focusNode,
     required this.onChanged,
     required this.onClear,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

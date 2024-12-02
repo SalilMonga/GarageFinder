@@ -4,7 +4,7 @@ import 'package:garagefinder/screens/parking_layout/garage_layout_page.dart';
 import 'package:garagefinder/screens/login_page.dart';
 import 'package:garagefinder/screens/parking_map.dart';
 import 'package:garagefinder/screens/signup_page.dart';
-import 'package:garagefinder/screens/organization_list.dart';
+import 'package:garagefinder/screens/organization_layout/organization_page.dart';
 import 'package:garagefinder/screens/settings_page.dart';
 import 'package:provider/provider.dart';
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:garagefinder/components/text_field.dart';
 import 'package:garagefinder/components/primary_button.dart';
-import 'package:garagefinder/screens/organization_list.dart';
+import 'package:garagefinder/screens/organization_layout/organization_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

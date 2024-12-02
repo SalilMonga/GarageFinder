@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class FeaturedOrganizations extends StatelessWidget {
-  const FeaturedOrganizations({Key? key}) : super(key: key);
+  const FeaturedOrganizations({super.key});
 
   @override
   Widget build(BuildContext context) {
