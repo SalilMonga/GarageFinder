@@ -44,3 +44,5 @@ app.*.map.json
 .vscode/tasks.json
 
 /backend/node_modules/
+
+.DS_Store
