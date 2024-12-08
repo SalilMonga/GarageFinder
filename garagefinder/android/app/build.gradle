@@ -40,6 +40,17 @@ android {
     }
 }
 
+dependencies {
+    // Ensure Firebase dependencies match your `pubspec.yaml`
+    implementation platform('com.google.firebase:firebase-bom:32.0.0')
+    implementation 'com.google.firebase:firebase-auth'
+    implementation 'com.google.firebase:firebase-firestore'
+}
+
+
 flutter {
     source = "../.."
 }
+
+// Add this line at the bottom
+apply plugin: 'com.google.gms.google-services'

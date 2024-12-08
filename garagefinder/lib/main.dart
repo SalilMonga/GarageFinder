@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:garagefinder/components/theme_notifier.dart';
 import 'package:garagefinder/screens/parking_layout/garage_layout_page.dart';
@@ -8,7 +9,10 @@ import 'package:garagefinder/screens/organization_layout/organization_page.dart'
 import 'package:garagefinder/screens/settings_page.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // Ensures Flutter is ready
+  await Firebase.initializeApp();
+  print('Firebase initialized successfully'); // Initialize Firebase
   runApp(
     ChangeNotifierProvider(
       create: (_) => ThemeNotifier(),
