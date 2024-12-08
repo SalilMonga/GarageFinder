@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:garagefinder/screens/organization_layout/components/welcome_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -15,7 +16,8 @@ class OrganizationsPage extends StatefulWidget {
   State<OrganizationsPage> createState() => _OrganizationsPageState();
 }
 
-class _OrganizationsPageState extends State<OrganizationsPage> {
+class _OrganizationsPageState extends State<OrganizationsPage>
+    with SingleTickerProviderStateMixin {
   int _currentIndex = 0; // Track the currently selected tab
 
   String _searchQuery = '';
@@ -25,6 +27,8 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
   final ScrollController _scrollController = ScrollController();
   //loading for API call wait
   bool _isLoading = true;
+  bool _showWelcomeOverlay = true;
+  String _userName = 'Salil';
   //Flutter parses JSON data into dynamic type.
   List<Map<String, dynamic>> _organizations = [];
   final Map<String, List<Map<String, dynamic>>> _groupedOrganizations = {};
@@ -44,6 +48,21 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _setInitialAlphabetOffset();
     });
+
+    // _animationController = AnimationController(
+    //   vsync: this,
+    //   duration:
+    //       const Duration(seconds: 2), // Duration for the shrinking animation
+    // );
+
+    // // Trigger the shrink animation after a short delay
+    // Future.delayed(const Duration(seconds: 1), () {
+    //   _animationController.forward().then((_) {
+    //     setState(() {
+    //       _showWelcomeOverlay = false; // Hide the overlay after the animation
+    //     });
+    //   });
+    // });
   }
 
   void _setInitialAlphabetOffset() {
@@ -181,6 +200,7 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
 
   @override
   void dispose() {
+    // _animationController.dispose();
     _scrollController.removeListener(_handleScroll);
     _scrollController.dispose();
     _searchFocusNode
@@ -198,11 +218,11 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Stack(
-              children: [
-                SingleChildScrollView(
+      body: Stack(
+        children: [
+          _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : SingleChildScrollView(
                   controller: _scrollController,
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -270,21 +290,31 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
                     ],
                   ),
                 ),
-                Positioned(
-                  top: _alphabetTopOffset,
-                  right: -18,
-                  child: SizedBox(
-                    width: 30,
-                    child: AlphabeticalScrollbar(
-                      alphabet: _alphabet,
-                      onLetterTap: (String letter) {
-                        _scrollToLetter(letter);
-                      },
-                    ),
-                  ),
-                ),
-              ],
+          if (_showWelcomeOverlay)
+            WelcomePage(
+              firstName: _userName, // Pass the user's name
+              onAnimationComplete: () {
+                setState(() {
+                  _showWelcomeOverlay =
+                      false; // Remove the overlay after animation
+                });
+              },
             ),
+          Positioned(
+            top: _alphabetTopOffset,
+            right: -18,
+            child: SizedBox(
+              width: 30,
+              child: AlphabeticalScrollbar(
+                alphabet: _alphabet,
+                onLetterTap: (String letter) {
+                  _scrollToLetter(letter);
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
       // Bottom Navigation Bar
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex, // Highlight the active tab
@@ -306,31 +336,4 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
       ),
     );
   }
-
-  // void _scrollToLetter(String letter) {
-  //   final index = _groupedOrganizations.keys.toList().indexOf(letter);
-  //   if (index != -1) {
-  //     double position = 0.0;
-
-  //     // Calculate the scroll position by summing up the height of each section.
-  //     for (int i = 0; i < index; i++) {
-  //       position +=
-  //           (_groupedOrganizations[_groupedOrganizations.keys.toList()[i]]
-  //                       ?.length ??
-  //                   0) *
-  //               138.0; // Adjust the value to your ListTile height
-  //     }
-
-  //     // Ensure the calculated position is within scroll bounds
-  //     final maxScrollExtent = _scrollController.position.maxScrollExtent;
-  //     final targetPosition =
-  //         position < maxScrollExtent ? position : maxScrollExtent;
-
-  //     _scrollController.animateTo(
-  //       targetPosition,
-  //       duration: const Duration(milliseconds: 300),
-  //       curve: Curves.easeInOut,
-  //     );
-  //   }
-  // }
 }

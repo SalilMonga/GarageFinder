@@ -46,6 +46,7 @@ class MyApp extends StatelessWidget {
                 '/settings': (context) => const SettingsPage(),
                 '/garage': (context) => const GarageLayoutPage(),
                 '/parking': (context) => const ParkingMap(),
+                // '/welcome': (context) => const WelcomePage(firstName: "Salil"),
                 // Add other screens here as needed
               },
             );
