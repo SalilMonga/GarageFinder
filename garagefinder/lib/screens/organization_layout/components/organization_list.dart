@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 
 class OrganizationList extends StatelessWidget {
   final Map<String, List<Map<String, dynamic>>> groupedOrganizations;
-
   final Map<String, GlobalKey> sectionKeys;
+  final Function(Map<String, dynamic>) onOrganizationTap; // Callback for tap
 
   const OrganizationList({
     super.key,
     required this.groupedOrganizations,
     required this.sectionKeys,
+    required this.onOrganizationTap,
   });
 
   @override
@@ -18,14 +19,12 @@ class OrganizationList extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: alphabet
-          .map((letter) =>
-              _buildSection(context, letter, groupedOrganizations[letter]))
+          .map((letter) => _buildSection(context, letter, groupedOrganizations[letter]))
           .toList(),
     );
   }
 
-  Widget _buildSection(BuildContext context, String letter,
-      List<Map<String, dynamic>>? organizations) {
+  Widget _buildSection(BuildContext context, String letter, List<Map<String, dynamic>>? organizations) {
     if (organizations == null || organizations.isEmpty) {
       return Container(); // If no organizations for the letter, return an empty container
     }
@@ -38,32 +37,24 @@ class OrganizationList extends StatelessWidget {
           letter,
           style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
-        ...organizations
-            .map((org) => _buildOrganizationItem(
-                context, org['name'] ?? '', org['location'] ?? ''))
-            .toList(),
+        ...organizations.map((org) => _buildOrganizationItem(context, org)),
         const SizedBox(height: 8),
       ],
     );
   }
 
-  Widget _buildOrganizationItem(
-      BuildContext context, String name, String location) {
+  Widget _buildOrganizationItem(BuildContext context, Map<String, dynamic> organization) {
     return ListTile(
       leading: const Icon(Icons.school),
       title: Text(
-        name,
+        organization['name'] ?? '',
         style: Theme.of(context).textTheme.bodyLarge,
       ),
       subtitle: Text(
-        location,
+        organization['location'] ?? '',
         style: Theme.of(context).textTheme.bodyMedium,
       ),
-      onTap: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Tapped on $name')),
-        );
-      },
+      onTap: () => onOrganizationTap(organization), // Call the callback with the selected organization
     );
   }
 }

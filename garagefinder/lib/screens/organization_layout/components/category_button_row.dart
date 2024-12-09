@@ -5,10 +5,10 @@ class CategoryButtonRow extends StatelessWidget {
   final ValueChanged<String> onCategorySelected;
 
   const CategoryButtonRow({
-    Key? key,
+    super.key,
     required this.selectedCategory,
     required this.onCategorySelected,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

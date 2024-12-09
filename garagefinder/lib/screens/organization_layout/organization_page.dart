@@ -187,6 +187,16 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
         .dispose(); // Clean up the focus node when the widget is disposed
     super.dispose();
   }
+void _navigateToParkingMap(Map<String, dynamic> school) {
+  Navigator.pushNamed(
+    context,
+    '/parking',
+    arguments: {
+      'schoolName': school['name'],
+      'schoolId': school['id'].toString(),
+    },
+  );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -208,7 +218,6 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Search Bar
                       CustomSearchBar(
                         controller: searchController,
                         focusNode: _searchFocusNode,
@@ -228,8 +237,6 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
                         },
                       ),
                       const SizedBox(height: 16),
-
-                      // Featured Organizations
                       const Text(
                         'Featured Organizations',
                         style: TextStyle(
@@ -237,7 +244,6 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
                       ),
                       const SizedBox(height: 8),
                       const FeaturedOrganizations(),
-                      // Categories
                       const SizedBox(height: 16),
                       const Text(
                         'Categories',
@@ -250,22 +256,21 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
                         onCategorySelected: (String category) {
                           setState(() {
                             _selectedCategory = category;
-                            _groupOrganizations(); // Update grouped list
+                            _groupOrganizations();
                           });
                         },
                       ),
                       const SizedBox(height: 16),
-                      // All Organizations
                       const Text(
                         'All Organizations',
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 8),
-                      // Organization List
                       OrganizationList(
                         groupedOrganizations: _groupedOrganizations,
                         sectionKeys: _sectionKeys,
+                        onOrganizationTap: _navigateToParkingMap, // Pass method
                       ),
                     ],
                   ),
@@ -285,9 +290,8 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
                 ),
               ],
             ),
-      // Bottom Navigation Bar
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex, // Highlight the active tab
+        currentIndex: _currentIndex,
         onTap: _onTabTapped,
         items: const [
           BottomNavigationBarItem(
