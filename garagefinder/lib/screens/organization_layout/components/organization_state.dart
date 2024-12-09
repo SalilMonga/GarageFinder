@@ -114,12 +114,19 @@ class OrganizationState extends ChangeNotifier {
   }
 
   void addFavorite(Map<String, dynamic> org) {
+    print('Adding to fav: $org');
     if (!favoriteOrganizations.any((fav) => fav['name'] == org['name'])) {
       favoriteOrganizations.add({
         'name': org['name'] ?? '',
         'location': org['location'] ?? '',
         'image': org['image'] ?? '',
       });
+      // Automatically pin the first 3 favorites
+      if (favoriteOrganizations.length <= 3) {
+        pinnedOrganizations.add(org['name'] ?? '');
+      }
+      print('Favorite orgs: $favoriteOrganizations');
+      print('Pinned orgs: $pinnedOrganizations');
       notifyListeners();
     }
   }
@@ -132,18 +139,30 @@ class OrganizationState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void togglePin(String name) {
+  void togglePin(String name, BuildContext context) {
     if (pinnedOrganizations.contains(name)) {
       pinnedOrganizations.remove(name);
     } else {
       if (pinnedOrganizations.length < 3) {
         pinnedOrganizations.add(name);
       } else {
-        // Handle UI for maximum pinned limit in the consuming widget
-        return;
+        // Show a message when trying to pin more than 3 items
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('You can only pin up to 3 organizations.'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+        return; // Exit without adding
       }
     }
     notifyListeners();
+  }
+
+  List<Map<String, dynamic>> getPinnedFavorites() {
+    return favoriteOrganizations
+        .where((org) => pinnedOrganizations.contains(org['name']))
+        .toList();
   }
 
   // Sort favorites based on criteria

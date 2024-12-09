@@ -3,7 +3,7 @@ import 'package:garagefinder/screens/organization_layout/components/organization
 import 'package:provider/provider.dart';
 
 class FavoritesPage extends StatefulWidget {
-  const FavoritesPage({Key? key}) : super(key: key);
+  const FavoritesPage({super.key});
 
   @override
   _FavoritesPageState createState() => _FavoritesPageState();
@@ -81,8 +81,9 @@ class _FavoritesPageState extends State<FavoritesPage> {
                           color: isPinned ? Colors.blue : Colors.grey,
                         ),
                         onPressed: () {
-                          organizationState.togglePin(org['name'] ?? '');
-                          setState(() {}); // Update the UI
+                          organizationState.togglePin(
+                              org['name'] ?? '', context);
+                          setState(() {}); // Refresh the UI
                         },
                       ),
                       IconButton(

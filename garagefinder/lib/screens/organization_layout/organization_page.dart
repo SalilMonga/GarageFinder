@@ -38,7 +38,7 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => FavoritesPage(
+          builder: (context) => const FavoritesPage(
               // favoriteOrganizations: favoriteOrganizations,
               // onFavoritesUpdated: (updatedFavorites) {
               //   // Sync updates with the global list
@@ -59,6 +59,7 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<OrganizationState>();
+    final pinnedFavorites = state.getPinnedFavorites();
     // debugPrint(
     //     'Favorite Organizations in build: ${state.favoriteOrganizations}');
 
@@ -95,8 +96,11 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
-                      state.favoriteOrganizations.isEmpty
-                          ? Center(
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (pinnedFavorites.isEmpty)
+                            Center(
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -104,34 +108,35 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
                                   const Icon(
                                     Icons.favorite_border_rounded,
                                     size: 48,
-                                    color: Colors.grey, // Icon color
+                                    color: Colors.grey,
                                   ),
-                                  const SizedBox(
-                                      height:
-                                          8), // Spacing between icon and text
+                                  const SizedBox(height: 8),
                                   Text(
                                     'No Favorite Organizations',
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyLarge
                                         ?.copyWith(
-                                          fontSize:
-                                              16, // Slightly smaller font size
-                                          fontWeight:
-                                              FontWeight.normal, // Remove bold
-                                          color: Colors
-                                              .grey, // Grey color for text
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.normal,
+                                          color: Colors.grey,
                                         ),
                                     textAlign: TextAlign.center,
                                   ),
                                 ],
                               ),
                             )
-                          : FavoriteOrganizations(
-                              favoriteOrganizations:
-                                  state.favoriteOrganizations,
+                          // we spread out the array as we need mutliple children and we want them to render individually
+                          else ...[
+                            const SizedBox(
+                                height: 16), // Add spacing before the card
+                            FavoriteOrganizationCard(
+                              favoriteOrganizations: pinnedFavorites,
                               onRemoveFavorite: state.removeFavorite,
                             ),
+                          ],
+                        ],
+                      ),
                       const SizedBox(height: 16),
                       // Categories
                       const Text(

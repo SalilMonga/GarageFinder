@@ -40,12 +40,13 @@ class MyApp extends StatelessWidget {
             return MaterialApp(
               title: 'Garage Finder App',
               // initialRoute: '/login', // The first screen to load
-              initialRoute: '/', // Set current test screen and uncomment
+              initialRoute:
+                  '/homepage', // Set current test screen and uncomment
               theme: themeNotifier.lightTheme, // Light Theme
               darkTheme: themeNotifier.darkTheme, // Dark Theme
               themeMode: themeNotifier.themeMode, // Current Theme Mode
               routes: {
-                '/': (context) => const HomePage(),
+                '/homepage': (context) => const HomePage(),
                 '/login': (context) => const LoginPage(),
                 '/signup': (context) => const SignUpPage(),
                 // '/organizations': (context) => const OrganizationsPage(),

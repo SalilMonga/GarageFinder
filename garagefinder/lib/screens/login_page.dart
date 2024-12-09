@@ -46,12 +46,13 @@ class _LoginPageState extends State<LoginPage> {
         );
 
         // Navigate to OrganizationsPage on successful login
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const OrganizationsPage(),
-          ),
-        );
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) => const OrganizationsPage(),
+        //   ),
+        // );
+        Navigator.pushNamed(context, '/homepage');
       } on FirebaseAuthException catch (e) {
         String errorMessage;
         if (e.code == 'user-not-found') {

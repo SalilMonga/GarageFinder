@@ -21,7 +21,6 @@ class OrganizationList extends StatefulWidget {
   // State<OrganizationList> createState() => _OrganizationListState();
   @override
   State<OrganizationList> createState() {
-    print('OrganizationList created: ${DateTime.now()}');
     return _OrganizationListState();
   }
 }
@@ -65,8 +64,8 @@ class _OrganizationListState extends State<OrganizationList> {
     // }
 
     final GlobalKey sectionKey = sectionKeys[letter]!;
-    print(
-        'Assigning sectionKey for letter: $letter -> $widget.sectionKeysOrgList');
+    // print(
+    //     'Assigning sectionKey for letter: $letter -> $widget.sectionKeysOrgList');
     return Column(
       key: sectionKey,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,9 +86,11 @@ class _OrganizationListState extends State<OrganizationList> {
 
   Widget _buildOrganizationItem(
       BuildContext context, String name, String location) {
+    final organizationState =
+        Provider.of<OrganizationState>(context, listen: false);
     final org = {'name': name, 'location': location};
-    final isFavorite =
-        widget.favoriteOrganizations.any((fav) => fav['name'] == name);
+    final isFavorite = organizationState.favoriteOrganizations
+        .any((fav) => fav['name'] == name);
 
     return ListTile(
       leading: const Icon(Icons.school),
@@ -109,23 +110,15 @@ class _OrganizationListState extends State<OrganizationList> {
               : Colors.grey, // Star color based on favorite status
         ),
         onPressed: () {
-          setState(() {
-            if (isFavorite) {
-              widget.favoriteOrganizations.removeWhere(
-                  (fav) => fav['name'] == name); // Remove the full org map
-            } else {
-              widget.favoriteOrganizations.add(org); // Add the full org map
-            }
-            _updateFavorites(); // Notify parent about updated favorites
-          });
+          if (isFavorite) {
+            organizationState.removeFavorite(org); // Update global state
+          } else {
+            organizationState.addFavorite(org); // Update global state
+          }
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(isFavorite
-                  ? '$name removed from favorites'
-                  : '$name added to favorites'),
-            ),
-          );
+          // Notify parent about updated favorites
+          widget.onFavoritesUpdated(organizationState.favoriteOrganizations);
+          setState(() {}); // Update local UI
         },
       ),
     );

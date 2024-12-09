@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class FavoriteOrganizations extends StatelessWidget {
+class FavoriteOrganizationCard extends StatelessWidget {
   final List<Map<String, dynamic>> favoriteOrganizations;
   final Function(Map<String, dynamic>) onRemoveFavorite;
 
-  const FavoriteOrganizations({
+  const FavoriteOrganizationCard({
     super.key,
     required this.favoriteOrganizations,
     required this.onRemoveFavorite,
