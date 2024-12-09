@@ -1,12 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:garagefinder/components/theme_notifier.dart';
+import 'package:garagefinder/screens/homepage.dart';
 import 'package:garagefinder/screens/organization_layout/components/organization_state.dart';
 import 'package:garagefinder/screens/parking_layout/garage_layout_page.dart';
 import 'package:garagefinder/screens/login_page.dart';
 import 'package:garagefinder/screens/parking_map.dart';
 import 'package:garagefinder/screens/signup_page.dart';
-import 'package:garagefinder/screens/organization_layout/organization_page.dart';
 import 'package:garagefinder/screens/settings_page.dart';
 import 'package:provider/provider.dart';
 
@@ -40,15 +40,15 @@ class MyApp extends StatelessWidget {
             return MaterialApp(
               title: 'Garage Finder App',
               // initialRoute: '/login', // The first screen to load
-              initialRoute:
-                  '/organizations', // Set current test screen and uncomment
+              initialRoute: '/', // Set current test screen and uncomment
               theme: themeNotifier.lightTheme, // Light Theme
               darkTheme: themeNotifier.darkTheme, // Dark Theme
               themeMode: themeNotifier.themeMode, // Current Theme Mode
               routes: {
+                '/': (context) => const HomePage(),
                 '/login': (context) => const LoginPage(),
                 '/signup': (context) => const SignUpPage(),
-                '/organizations': (context) => const OrganizationsPage(),
+                // '/organizations': (context) => const OrganizationsPage(),
                 '/settings': (context) => const SettingsPage(),
                 '/garage': (context) => const GarageLayoutPage(),
                 '/parking': (context) => const ParkingMap(),

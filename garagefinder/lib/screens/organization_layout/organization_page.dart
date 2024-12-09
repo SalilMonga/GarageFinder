@@ -39,20 +39,20 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
         context,
         MaterialPageRoute(
           builder: (context) => FavoritesPage(
-            favoriteOrganizations: favoriteOrganizations,
-            onFavoritesUpdated: (updatedFavorites) {
-              // Sync updates with the global list
-              setState(() {
-                favoriteOrganizations.clear();
-                favoriteOrganizations.addAll(updatedFavorites);
-              });
-            },
-          ),
+              // favoriteOrganizations: favoriteOrganizations,
+              // onFavoritesUpdated: (updatedFavorites) {
+              //   // Sync updates with the global list
+              //   setState(() {
+              //     favoriteOrganizations.clear();
+              //     favoriteOrganizations.addAll(updatedFavorites);
+              //   });
+              // },
+              ),
         ),
       );
       // Navigator.pushNamed(context, '/favorites');
     } else if (index == 2) {
-      Navigator.pushNamed(context, '/settings');
+      // Navigator.pushNamed(context, '/settings');
     }
   }
 
@@ -153,17 +153,18 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
-                      OrganizationList(
-                        groupedOrganizations: state.groupedOrganizations,
-                        sectionKeys: state.sectionKeys,
-                        favoriteOrganizations: state.favoriteOrganizations,
-                        onFavoritesUpdated: (favorites) {
-                          state.favoriteOrganizations =
-                              favorites.cast<Map<String, dynamic>>();
-                          // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
-                          state.notifyListeners();
-                        },
-                      ),
+                      if (!state.showWelcomeOverlay)
+                        OrganizationList(
+                          groupedOrganizations: state.groupedOrganizations,
+                          sectionKeys: state.sectionKeys,
+                          favoriteOrganizations: state.favoriteOrganizations,
+                          onFavoritesUpdated: (favorites) {
+                            state.favoriteOrganizations =
+                                favorites.cast<Map<String, dynamic>>();
+                            // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
+                            state.notifyListeners();
+                          },
+                        ),
                     ],
                   ),
                 ),
@@ -189,25 +190,25 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
             ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: state.currentIndex,
-        onTap: (index) =>
-            onTabTapped(index, context, state.favoriteOrganizations),
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.star),
-            label: 'Favorite',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
-        ],
-      ),
+      // bottomNavigationBar: BottomNavigationBar(
+      //   currentIndex: state.currentIndex,
+      //   onTap: (index) =>
+      //       onTabTapped(index, context, state.favoriteOrganizations),
+      //   items: const [
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.home),
+      //       label: 'Home',
+      //     ),
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.star),
+      //       label: 'Favorite',
+      //     ),
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.settings),
+      //       label: 'Settings',
+      //     ),
+      //   ],
+      // ),
     );
   }
 }

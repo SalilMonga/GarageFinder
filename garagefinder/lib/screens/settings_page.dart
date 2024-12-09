@@ -10,22 +10,22 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  int _currentIndex = 2; // Track the currently selected tab
+  // int _currentIndex = 2; // Track the currently selected tab
 
-  void _onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index; // Update the current index
-    });
+  // void _onTabTapped(int index) {
+  //   setState(() {
+  //     _currentIndex = index; // Update the current index
+  //   });
 
-    // Navigate based on the tapped index
-    if (index == 0) {
-      Navigator.pushNamed(context, '/organizations'); // Navigate to Home
-    } else if (index == 1) {
-      // Navigator.pushNamed(context, '/favorites'); // Navigate to Favorites
-    } else if (index == 2) {
-      // Navigator.pushNamed(context, '/settings'); // Navigate to Settings
-    }
-  }
+  //   // Navigate based on the tapped index
+  //   if (index == 0) {
+  //     Navigator.pushNamed(context, '/organizations'); // Navigate to Home
+  //   } else if (index == 1) {
+  //     // Navigator.pushNamed(context, '/favorites'); // Navigate to Favorites
+  //   } else if (index == 2) {
+  //     // Navigator.pushNamed(context, '/settings'); // Navigate to Settings
+  //   }
+  // }
 
   void _showThemeSelectionModal(BuildContext context) {
     final themeNotifier = Provider.of<ThemeNotifier>(context, listen: false);
@@ -179,35 +179,35 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        // currentIndex: 2, // Index for the Settings Page
-        // onTap: (index) {
-        //   if (index == 0) {
-        //     Navigator.pushNamed(context, '/organizations'); // Navigate to Home
-        //   } else if (index == 1) {
-        //     // Navigator.pushNamed(context, '/favorites'); // Navigate to Favorites
-        //   } else if (index == 2) {
-        //     // Stay on Settings Page
-        //   }
-        // },
-        currentIndex: _currentIndex, // Highlight the active tab
-        //TODO: ontapping the selected screen icon again, just go to the top of the screen.
-        onTap: _onTabTapped,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.star),
-            label: 'Favorites',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
-        ],
-      ),
+      // bottomNavigationBar: BottomNavigationBar(
+      //   // currentIndex: 2, // Index for the Settings Page
+      //   // onTap: (index) {
+      //   //   if (index == 0) {
+      //   //     Navigator.pushNamed(context, '/organizations'); // Navigate to Home
+      //   //   } else if (index == 1) {
+      //   //     // Navigator.pushNamed(context, '/favorites'); // Navigate to Favorites
+      //   //   } else if (index == 2) {
+      //   //     // Stay on Settings Page
+      //   //   }
+      //   // },
+      //   currentIndex: _currentIndex, // Highlight the active tab
+      //   //TODO: ontapping the selected screen icon again, just go to the top of the screen.
+      //   onTap: _onTabTapped,
+      //   items: const [
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.home),
+      //       label: 'Home',
+      //     ),
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.star),
+      //       label: 'Favorites',
+      //     ),
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.settings),
+      //       label: 'Settings',
+      //     ),
+      //   ],
+      // ),
     );
   }
 }

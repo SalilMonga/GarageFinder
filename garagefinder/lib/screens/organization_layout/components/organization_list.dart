@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:garagefinder/screens/organization_layout/components/organization_state.dart';
+import 'package:provider/provider.dart';
 
 class OrganizationList extends StatefulWidget {
   final List<Map<String, dynamic>> favoriteOrganizations;
@@ -15,8 +17,13 @@ class OrganizationList extends StatefulWidget {
     required this.onFavoritesUpdated,
   });
 
+  // @override
+  // State<OrganizationList> createState() => _OrganizationListState();
   @override
-  State<OrganizationList> createState() => _OrganizationListState();
+  State<OrganizationList> createState() {
+    print('OrganizationList created: ${DateTime.now()}');
+    return _OrganizationListState();
+  }
 }
 
 class _OrganizationListState extends State<OrganizationList> {
@@ -29,6 +36,8 @@ class _OrganizationListState extends State<OrganizationList> {
   @override
   Widget build(BuildContext context) {
     List<String> alphabet = widget.groupedOrganizations.keys.toList()..sort();
+    final sectionKeys =
+        Provider.of<OrganizationState>(context, listen: false).sectionKeys;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -37,17 +46,27 @@ class _OrganizationListState extends State<OrganizationList> {
                 context,
                 letter,
                 widget.groupedOrganizations[letter],
+                sectionKeys,
               ))
           .toList(),
     );
   }
 
-  Widget _buildSection(BuildContext context, String letter,
-      List<Map<String, dynamic>>? organizations) {
+  Widget _buildSection(
+      BuildContext context,
+      String letter,
+      List<Map<String, dynamic>>? organizations,
+      Map<String, GlobalKey> sectionKeys) {
     if (organizations == null || organizations.isEmpty) {
       return Container(); // If no organizations for the letter, return an empty container
     }
-    final GlobalKey sectionKey = widget.sectionKeys[letter]!;
+    // if (!sectionKeys.containsKey(letter)) {
+    //   sectionKeys[letter] = GlobalKey(debugLabel: 'SectionKey_$letter');
+    // }
+
+    final GlobalKey sectionKey = sectionKeys[letter]!;
+    print(
+        'Assigning sectionKey for letter: $letter -> $widget.sectionKeysOrgList');
     return Column(
       key: sectionKey,
       crossAxisAlignment: CrossAxisAlignment.start,

@@ -16,12 +16,14 @@ class OrganizationState extends ChangeNotifier {
   bool get hasFavorites => favoriteOrganizations.isNotEmpty;
   Map<String, List<Map<String, dynamic>>> groupedOrganizations = {};
   Map<String, GlobalKey> sectionKeys = {};
+  Set<String> pinnedOrganizations = {};
   double alphabetTopOffset = 0.0;
   final ScrollController scrollController = ScrollController();
   final TextEditingController searchController = TextEditingController();
   final FocusNode searchFocusNode = FocusNode();
 
   OrganizationState() {
+    print('OrganizationState created: ${DateTime.now()}');
     fetchOrganizations();
     // scrollController.addListener(handleScroll);
   }
@@ -61,8 +63,9 @@ class OrganizationState extends ChangeNotifier {
   }
 
   void groupOrganizations() {
+    print('Running groupOrganizations at: ${DateTime.now()}');
     groupedOrganizations.clear();
-    sectionKeys.clear();
+    // sectionKeys.clear();
 
     // Filter organizations by search query
     final filteredOrganizations = organizations.where((org) {
@@ -78,7 +81,11 @@ class OrganizationState extends ChangeNotifier {
       final String letter = org['name'][0].toUpperCase();
       if (!groupedOrganizations.containsKey(letter)) {
         groupedOrganizations[letter] = [];
-        sectionKeys[letter] = GlobalKey();
+        // sectionKeys.putIfAbsent(
+        //     letter, () => GlobalKey(debugLabel: 'SectionKey_$letter'));
+        if (!sectionKeys.containsKey(letter)) {
+          sectionKeys[letter] = GlobalKey();
+        }
       }
       groupedOrganizations[letter]!.add(org);
     }
@@ -106,43 +113,12 @@ class OrganizationState extends ChangeNotifier {
     notifyListeners();
   }
 
-  // void addToFavorites(Map<String, String> org) {
-  //   if (favoriteOrganizations.length >= 3) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(
-  //         content: Text('You can only select up to 3 favorite organizations.'),
-  //       ),
-  //     );
-  //     return;
-  //   }
-
-  //   setState(() {
-  //     favoriteOrganizations.add(org);
-  //   });
-  // }
-  void addFavorite(dynamic org) {
-    // Parse the string input if necessary
-    Map<String, dynamic> parsedOrg;
-    if (org is String) {
-      try {
-        parsedOrg = json.decode(org);
-      } catch (e) {
-        print('Error parsing string: $e');
-        return;
-      }
-    } else if (org is Map<String, dynamic>) {
-      parsedOrg = org;
-    } else {
-      throw Exception('Invalid input type for addFavorite');
-    }
-
-    // Check if the organization is already in favorites
-    debugPrint('Adding to favorites: $parsedOrg');
-    if (!favoriteOrganizations.any((fav) => fav['name'] == parsedOrg['name'])) {
+  void addFavorite(Map<String, dynamic> org) {
+    if (!favoriteOrganizations.any((fav) => fav['name'] == org['name'])) {
       favoriteOrganizations.add({
-        'name': parsedOrg['name'] ?? '',
-        'location': parsedOrg['location'] ?? '',
-        'image': parsedOrg['image'] ?? '',
+        'name': org['name'] ?? '',
+        'location': org['location'] ?? '',
+        'image': org['image'] ?? '',
       });
       notifyListeners();
     }
@@ -152,7 +128,44 @@ class OrganizationState extends ChangeNotifier {
   void removeFavorite(Map<String, dynamic> org) {
     debugPrint('Removing from favorites: $org');
     favoriteOrganizations.removeWhere((fav) => fav['name'] == org['name']);
+    pinnedOrganizations.remove(org['name']);
     notifyListeners();
+  }
+
+  void togglePin(String name) {
+    if (pinnedOrganizations.contains(name)) {
+      pinnedOrganizations.remove(name);
+    } else {
+      if (pinnedOrganizations.length < 3) {
+        pinnedOrganizations.add(name);
+      } else {
+        // Handle UI for maximum pinned limit in the consuming widget
+        return;
+      }
+    }
+    notifyListeners();
+  }
+
+  // Sort favorites based on criteria
+  List<Map<String, dynamic>> getSortedFavorites(String sortOrder) {
+    final sortedFavorites =
+        List<Map<String, dynamic>>.from(favoriteOrganizations);
+
+    if (sortOrder == 'Pinned') {
+      sortedFavorites.sort((a, b) {
+        final aPinned = pinnedOrganizations.contains(a['name']);
+        final bPinned = pinnedOrganizations.contains(b['name']);
+        if (aPinned && !bPinned) return -1;
+        if (!aPinned && bPinned) return 1;
+        return 0;
+      });
+    } else if (sortOrder == 'Name') {
+      sortedFavorites
+          .sort((a, b) => (a['name'] ?? '').compareTo(b['name'] ?? ''));
+    }
+
+    // For 'Recently Added', return in original order
+    return sortedFavorites;
   }
 
   void setInitialAlphabetOffset(BuildContext context) {
@@ -205,33 +218,6 @@ class OrganizationState extends ChangeNotifier {
       }
     }
   }
-
-  // // Handle Bottom Navigation
-  // void onTabTapped(int index, BuildContext context,
-  //     List<Map<String, dynamic>> favoriteOrganizations) {
-  //   currentIndex = index;
-  //   notifyListeners();
-  //   if (index == 1) {
-  //     Navigator.push(
-  //       context,
-  //       MaterialPageRoute(
-  //         builder: (context) => FavoritesPage(
-  //           favoriteOrganizations: favoriteOrganizations,
-  //            onFavoritesUpdated: (updatedFavorites) {
-  //               // Sync updates with the global list
-  //               setState(() {
-  //                 favoriteOrganizations.clear();
-  //                 favoriteOrganizations.addAll(updatedFavorites);
-  //               });
-  //             },
-  //         ),
-  //       ),
-  //     );
-  //     // Navigator.pushNamed(context, '/favorites');
-  //   } else if (index == 2) {
-  //     Navigator.pushNamed(context, '/settings');
-  //   }
-  // }
 
   @override
   void dispose() {

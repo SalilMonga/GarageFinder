@@ -1,89 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:garagefinder/screens/organization_layout/components/organization_state.dart';
+import 'package:provider/provider.dart';
 
 class FavoritesPage extends StatefulWidget {
-  final List<Map<String, dynamic>> favoriteOrganizations;
-  final ValueChanged<List<Map<String, String>>> onFavoritesUpdated;
-
-  const FavoritesPage({
-    Key? key,
-    required this.favoriteOrganizations,
-    required this.onFavoritesUpdated,
-  }) : super(key: key);
+  const FavoritesPage({Key? key}) : super(key: key);
 
   @override
   _FavoritesPageState createState() => _FavoritesPageState();
 }
 
 class _FavoritesPageState extends State<FavoritesPage> {
-  late List<Map<String, String>> _favorites;
   String _sortOrder = 'Name'; // Default sort order
-  final Set<String> _pinnedOrgs =
-      {}; // Keeps track of pinned organization names
-
-  @override
-  void initState() {
-    super.initState();
-    _favorites = List<Map<String, String>>.from(widget.favoriteOrganizations);
-    _applySort();
-  }
-
-  void _applySort() {
-    setState(() {
-      if (_sortOrder == 'Pinned') {
-        _favorites.sort((a, b) {
-          final aPinned = _pinnedOrgs.contains(a['name']);
-          final bPinned = _pinnedOrgs.contains(b['name']);
-          if (aPinned && !bPinned) return -1;
-          if (!aPinned && bPinned) return 1;
-          return 0;
-        });
-      } else if (_sortOrder == 'Name') {
-        _favorites.sort((a, b) => (a['name'] ?? '').compareTo(b['name'] ?? ''));
-      } else if (_sortOrder == 'Recently Added') {
-        // Keeps the original order when sorted by recently added
-        _favorites =
-            List<Map<String, String>>.from(widget.favoriteOrganizations);
-      }
-    });
-  }
-
-  void _togglePin(Map<String, String> org) {
-    setState(() {
-      if (_pinnedOrgs.contains(org['name'])) {
-        // If already pinned, unpin it
-        _pinnedOrgs.remove(org['name']);
-      } else {
-        // If not pinned, pin it only if less than 3 are pinned
-        if (_pinnedOrgs.length < 3) {
-          _pinnedOrgs.add(org['name']!);
-        } else {
-          // Show a message if the user tries to pin more than 3
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('You can only pin up to 3 organizations.'),
-              duration: Duration(seconds: 2),
-            ),
-          );
-        }
-      }
-      _applySort(); // Apply sorting to reflect the changes
-    });
-
-    widget.onFavoritesUpdated(_favorites);
-  }
-
-  void _unfavorite(Map<String, String> org) {
-    setState(() {
-      _pinnedOrgs.remove(org['name']); // Remove from pinned if pinned
-      _favorites.remove(org); // Remove from the favorites list
-      _applySort();
-    });
-
-    widget.onFavoritesUpdated(_favorites);
-  }
 
   @override
   Widget build(BuildContext context) {
+    final organizationState = Provider.of<OrganizationState>(context);
+    final favorites = organizationState.getSortedFavorites(_sortOrder);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Favorite Organizations'),
@@ -106,15 +39,14 @@ class _FavoritesPageState extends State<FavoritesPage> {
             ],
             onChanged: (value) {
               setState(() {
-                _sortOrder = value ?? 'Pinned';
-                _applySort();
+                _sortOrder = value ?? 'Name';
               });
             },
             icon: const Icon(Icons.sort),
           ),
         ],
       ),
-      body: _favorites.isEmpty
+      body: favorites.isEmpty
           ? const Center(
               child: Text(
                 'No favorite organizations yet.',
@@ -122,10 +54,11 @@ class _FavoritesPageState extends State<FavoritesPage> {
               ),
             )
           : ListView.builder(
-              itemCount: _favorites.length,
+              itemCount: favorites.length,
               itemBuilder: (context, index) {
-                final org = _favorites[index];
-                final isPinned = _pinnedOrgs.contains(org['name']);
+                final org = favorites[index];
+                final isPinned =
+                    organizationState.pinnedOrganizations.contains(org['name']);
                 return ListTile(
                   leading: CircleAvatar(
                     backgroundImage: NetworkImage(
@@ -147,11 +80,17 @@ class _FavoritesPageState extends State<FavoritesPage> {
                           Icons.push_pin,
                           color: isPinned ? Colors.blue : Colors.grey,
                         ),
-                        onPressed: () => _togglePin(org),
+                        onPressed: () {
+                          organizationState.togglePin(org['name'] ?? '');
+                          setState(() {}); // Update the UI
+                        },
                       ),
                       IconButton(
                         icon: const Icon(Icons.star, color: Colors.yellow),
-                        onPressed: () => _unfavorite(org),
+                        onPressed: () {
+                          organizationState.removeFavorite(org);
+                          setState(() {}); // Update the UI
+                        },
                       ),
                     ],
                   ),
