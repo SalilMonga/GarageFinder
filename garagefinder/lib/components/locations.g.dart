@@ -30,12 +30,36 @@ Map<String, dynamic> _$GarageToJson(Garage instance) => <String, dynamic>{
       'address': instance.address,
     };
 
-Locations _$LocationsFromJson(Map<String, dynamic> json) => Locations(
+School _$SchoolFromJson(Map<String, dynamic> json) => School(
+      id: (json['id'] as num).toInt(),
+      name: json['name'] as String,
+      type: json['type'] as String,
+      location: json['location'] as String,
+      image: json['image'] as String,
+      lat: (json['lat'] as num).toDouble(),
+      long: (json['long'] as num).toDouble(),
       garages: (json['garages'] as List<dynamic>)
           .map((e) => Garage.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
-Map<String, dynamic> _$LocationsToJson(Locations instance) => <String, dynamic>{
+Map<String, dynamic> _$SchoolToJson(School instance) => <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'type': instance.type,
+      'location': instance.location,
+      'image': instance.image,
+      'lat': instance.lat,
+      'long': instance.long,
       'garages': instance.garages,
+    };
+
+Schools _$SchoolsFromJson(Map<String, dynamic> json) => Schools(
+      schools: (json['schools'] as List<dynamic>)
+          .map((e) => School.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$SchoolsToJson(Schools instance) => <String, dynamic>{
+      'schools': instance.schools,
     };

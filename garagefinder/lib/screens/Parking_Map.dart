@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:garagefinder/components/theme_notifier.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import '../components/theme_notifier.dart';
 import '../components/primary_button.dart';
 import '../components/locations.dart' as locations;
 
@@ -13,22 +13,26 @@ class ParkingMap extends StatefulWidget {
 
 class _ParkingMapState extends State<ParkingMap> {
   final Map<String, Marker> _markers = {};
+  late GoogleMapController _mapController; // Controller for Google Map
 
   Future<void> _onMapCreated(GoogleMapController controller) async {
+    _mapController = controller; // Store the map controller
     try {
-      final parkingGarages = await locations.getParkingGarages();
+      final schools = await locations.getSchools(); // Fetch schools data
       setState(() {
         _markers.clear();
-        for (final garage in parkingGarages.garages) {
-          final marker = Marker(
-            markerId: MarkerId(garage.name),
-            position: LatLng(garage.lat, garage.lng),
-            infoWindow: InfoWindow(
-              title: garage.name,
-              snippet: garage.address,
-            ),
-          );
-          _markers[garage.name] = marker;
+        for (final school in schools.schools) {
+          for (final garage in school.garages) {
+            final marker = Marker(
+              markerId: MarkerId(garage.name),
+              position: LatLng(garage.lat, garage.lng),
+              infoWindow: InfoWindow(
+                title: garage.name,
+                snippet: garage.address,
+              ),
+            );
+            _markers[garage.name] = marker;
+          }
         }
       });
     } catch (e) {
@@ -40,53 +44,77 @@ class _ParkingMapState extends State<ParkingMap> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('CSUN Parking Map'),
-        elevation: 1,
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildHeaderSection(),
-            _buildMapSection(),
-            _buildButtonsSection(),
-            _buildParkingStructuresSection(),
-            _buildAdditionalInfoSection(),
-          ],
-        ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0, // Highlight "Home" or update based on your app logic
-        onTap: (index) {
-          if (index == 1) {
-            // Navigator.pushNamed(context, '/favorites');
-          } else if (index == 2) {
-            Navigator.pushNamed(context, '/settings');
-          }
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.star),
-            label: 'Favorites',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
-        ],
+  Future<void> _centerMapOnSchool({required String schoolIdentifier}) async {
+  try {
+    final schools = await locations.getSchools(); // Fetch school data
+    final school = schools.schools.firstWhere(
+      (s) => s.name == schoolIdentifier || s.id.toString() == schoolIdentifier,
+      orElse: () => locations.School(
+        id: -1,
+        name: 'Unknown School',
+        type: 'Unknown',
+        location: 'Unknown',
+        image: '', // Default or placeholder image
+        lat: 0.0,
+        long: 0.0,
+        garages: [],
       ),
     );
+
+    if (school.id != -1) {
+      // Center the map on the valid school
+      _mapController.animateCamera(
+        CameraUpdate.newLatLng(
+          LatLng(school.lat, school.long),
+        ),
+      );
+    } else {
+      // Show a message if the school is not valid
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('School not found.')),
+      );
+    }
+  } catch (e) {
+    // Handle any other errors
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error centering map: $e')),
+    );
+  }
+}
+
+  @override
+Widget build(BuildContext context) {
+  final Map<String, dynamic> args =
+      ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>? ?? {};
+  final String? schoolName = args['schoolName'];
+  final String? schoolId = args['schoolId'];
+
+  if (schoolName != null || schoolId != null) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _centerMapOnSchool(schoolIdentifier: schoolName ?? schoolId!);
+    });
   }
 
-  Widget _buildHeaderSection() {
+  return Scaffold(
+    appBar: AppBar(
+      title: const Text('Parking Map'),
+      elevation: 1,
+    ),
+    body: SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildHeaderSection(),
+          _buildMapSection(), // Map confined to a section
+          _buildButtonsSection(),
+          _buildParkingStructuresSection(),
+          _buildAdditionalInfoSection(),
+        ],
+      ),
+    ),
+  );
+}
+Widget _buildHeaderSection() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(
@@ -115,28 +143,26 @@ class _ParkingMapState extends State<ParkingMap> {
       ),
     );
   }
-
-  Widget _buildMapSection() {
-    return Container(
-      margin: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.shade300),
-      ),
-      child: SizedBox(
-        height: 200,
-        child: GoogleMap(
-          initialCameraPosition: const CameraPosition(
-            target: LatLng(34.241, -118.528), // Centered around CSUN
-            zoom: 15,
-          ),
-          onMapCreated: _onMapCreated,
-          markers: _markers.values.toSet(),
+Widget _buildMapSection() {
+  return Container(
+    margin: const EdgeInsets.all(16.0),
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(8),
+      border: Border.all(color: Colors.grey.shade300),
+    ),
+    child: SizedBox(
+      height: 200, // Adjust the height of the map
+      child: GoogleMap(
+        initialCameraPosition: const CameraPosition(
+          target: LatLng(34.241, -118.528), // Default position
+          zoom: 15,
         ),
+        onMapCreated: _onMapCreated,
+        markers: _markers.values.toSet(),
       ),
-    );
-  }
-
+    ),
+  );
+}
   Widget _buildButtonsSection() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -152,7 +178,8 @@ class _ParkingMapState extends State<ParkingMap> {
     );
   }
 
-  Widget _buildParkingStructuresSection() {
+
+   Widget _buildParkingStructuresSection() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
