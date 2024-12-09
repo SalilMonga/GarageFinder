@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class FavoriteOrganizations extends StatelessWidget {
-  final List<Map<String, String>> favoriteOrganizations;
-  final Function(Map<String, String>) onRemoveFavorite;
+  final List<Map<String, dynamic>> favoriteOrganizations;
+  final Function(Map<String, dynamic>) onRemoveFavorite;
 
   const FavoriteOrganizations({
     super.key,
@@ -12,6 +12,8 @@ class FavoriteOrganizations extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('Favorite Organizations: $favoriteOrganizations');
+
     return SizedBox(
       height: 150, // Set a fixed height for the card layout
       child: ListView.builder(
@@ -47,18 +49,26 @@ class FavoriteOrganizations extends StatelessWidget {
                           topLeft: Radius.circular(12),
                           topRight: Radius.circular(12),
                         ),
-                        child: Image.network(
-                          org['image'] ?? 'https://via.placeholder.com/150',
-                          height: 80,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              const Icon(
-                            Icons.broken_image,
-                            size: 80,
-                            color: Colors.grey,
-                          ),
-                        ),
+                        child: org['image'] != null && org['image'].isNotEmpty
+                            ? Image.network(
+                                org['image'],
+                                height: 80,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    Image.asset(
+                                  'assets/images/ducati.jpg',
+                                  height: 80,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                ),
+                              )
+                            : Image.asset(
+                                'assets/images/placeholder.jpg',
+                                height: 80,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                              ),
                       ),
                       // Organization Details
                       Padding(
@@ -83,23 +93,6 @@ class FavoriteOrganizations extends StatelessWidget {
                         ),
                       ),
                     ],
-                  ),
-                ),
-                // Remove Button
-                Positioned(
-                  top: 4,
-                  right: 4,
-                  child: GestureDetector(
-                    onTap: () => onRemoveFavorite(org),
-                    child: const CircleAvatar(
-                      backgroundColor: Colors.red,
-                      radius: 14,
-                      child: Icon(
-                        Icons.close,
-                        size: 16,
-                        color: Colors.white,
-                      ),
-                    ),
                   ),
                 ),
               ],

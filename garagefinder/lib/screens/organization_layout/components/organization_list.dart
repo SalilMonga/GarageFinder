@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 
 class OrganizationList extends StatefulWidget {
+  final List<Map<String, dynamic>> favoriteOrganizations;
   final Map<String, List<Map<String, dynamic>>> groupedOrganizations;
   final Map<String, GlobalKey> sectionKeys;
-  final Function(List<String>)
+  final Function(List<Map<String, dynamic>>)
       onFavoritesUpdated; // Callback to update favorites
 
   const OrganizationList({
     super.key,
+    required this.favoriteOrganizations,
     required this.groupedOrganizations,
     required this.sectionKeys,
     required this.onFavoritesUpdated,
@@ -18,11 +20,10 @@ class OrganizationList extends StatefulWidget {
 }
 
 class _OrganizationListState extends State<OrganizationList> {
-  final Set<String> _favoriteOrganizations =
-      {}; // Stores favorite organizations by name
-
   void _updateFavorites() {
-    widget.onFavoritesUpdated(_favoriteOrganizations.toList());
+    widget.onFavoritesUpdated(
+      widget.favoriteOrganizations.toList(), // Pass list of maps
+    );
   }
 
   @override
@@ -59,7 +60,7 @@ class _OrganizationListState extends State<OrganizationList> {
           final name = org['name'] ?? '';
           final location = org['location'] ?? '';
           return _buildOrganizationItem(context, name, location);
-        }).toList(),
+        }),
         const SizedBox(height: 8),
       ],
     );
@@ -67,7 +68,9 @@ class _OrganizationListState extends State<OrganizationList> {
 
   Widget _buildOrganizationItem(
       BuildContext context, String name, String location) {
-    final isFavorite = _favoriteOrganizations.contains(name);
+    final org = {'name': name, 'location': location};
+    final isFavorite =
+        widget.favoriteOrganizations.any((fav) => fav['name'] == name);
 
     return ListTile(
       leading: const Icon(Icons.school),
@@ -89,9 +92,10 @@ class _OrganizationListState extends State<OrganizationList> {
         onPressed: () {
           setState(() {
             if (isFavorite) {
-              _favoriteOrganizations.remove(name); // Remove from favorites
+              widget.favoriteOrganizations.removeWhere(
+                  (fav) => fav['name'] == name); // Remove the full org map
             } else {
-              _favoriteOrganizations.add(name); // Add to favorites
+              widget.favoriteOrganizations.add(org); // Add the full org map
             }
             _updateFavorites(); // Notify parent about updated favorites
           });

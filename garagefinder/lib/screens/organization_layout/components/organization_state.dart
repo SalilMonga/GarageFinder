@@ -12,6 +12,8 @@ class OrganizationState extends ChangeNotifier {
   String userName = 'Salil'; // For WelcomePage
   List<Map<String, dynamic>> organizations = [];
   List<Map<String, dynamic>> favoriteOrganizations = [];
+
+  bool get hasFavorites => favoriteOrganizations.isNotEmpty;
   Map<String, List<Map<String, dynamic>>> groupedOrganizations = {};
   Map<String, GlobalKey> sectionKeys = {};
   double alphabetTopOffset = 0.0;
@@ -52,25 +54,11 @@ class OrganizationState extends ChangeNotifier {
       print('Error fetching organizations: $e');
       isLoading = false; // Handle error by stopping the loader
     } finally {
+      debugPrint('Favorite Organizations: $favoriteOrganizations');
+      isLoading = false;
       notifyListeners();
     }
   }
-
-  // // Group Organizations by Alphabet
-  // void groupOrganizations() {
-  //   groupedOrganizations.clear();
-  //   sectionKeys.clear();
-
-  //   for (var org in organizations) {
-  //     final String letter = org['name'][0].toUpperCase();
-  //     if (!groupedOrganizations.containsKey(letter)) {
-  //       groupedOrganizations[letter] = [];
-  //       sectionKeys[letter] = GlobalKey(); // Generate section keys
-  //     }
-  //     groupedOrganizations[letter]!.add(org);
-  //   }
-  //   notifyListeners();
-  // }
 
   void groupOrganizations() {
     groupedOrganizations.clear();
@@ -118,8 +106,51 @@ class OrganizationState extends ChangeNotifier {
     notifyListeners();
   }
 
+  // void addToFavorites(Map<String, String> org) {
+  //   if (favoriteOrganizations.length >= 3) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(
+  //         content: Text('You can only select up to 3 favorite organizations.'),
+  //       ),
+  //     );
+  //     return;
+  //   }
+
+  //   setState(() {
+  //     favoriteOrganizations.add(org);
+  //   });
+  // }
+  void addFavorite(dynamic org) {
+    // Parse the string input if necessary
+    Map<String, dynamic> parsedOrg;
+    if (org is String) {
+      try {
+        parsedOrg = json.decode(org);
+      } catch (e) {
+        print('Error parsing string: $e');
+        return;
+      }
+    } else if (org is Map<String, dynamic>) {
+      parsedOrg = org;
+    } else {
+      throw Exception('Invalid input type for addFavorite');
+    }
+
+    // Check if the organization is already in favorites
+    debugPrint('Adding to favorites: $parsedOrg');
+    if (!favoriteOrganizations.any((fav) => fav['name'] == parsedOrg['name'])) {
+      favoriteOrganizations.add({
+        'name': parsedOrg['name'] ?? '',
+        'location': parsedOrg['location'] ?? '',
+        'image': parsedOrg['image'] ?? '',
+      });
+      notifyListeners();
+    }
+  }
+
   // Remove from Favorites
   void removeFavorite(Map<String, dynamic> org) {
+    debugPrint('Removing from favorites: $org');
     favoriteOrganizations.removeWhere((fav) => fav['name'] == org['name']);
     notifyListeners();
   }
@@ -138,9 +169,6 @@ class OrganizationState extends ChangeNotifier {
 
   void initialize(BuildContext context) {
     setInitialAlphabetOffset(context);
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   setInitialAlphabetOffset(context);
-    // });
   }
 
   // Handles scroll behavior for the alphabetical scrollbar
@@ -178,16 +206,32 @@ class OrganizationState extends ChangeNotifier {
     }
   }
 
-  // Handle Bottom Navigation
-  void onTabTapped(int index, BuildContext context) {
-    currentIndex = index;
-    notifyListeners();
-    if (index == 1) {
-      Navigator.pushNamed(context, '/favorites');
-    } else if (index == 2) {
-      Navigator.pushNamed(context, '/settings');
-    }
-  }
+  // // Handle Bottom Navigation
+  // void onTabTapped(int index, BuildContext context,
+  //     List<Map<String, dynamic>> favoriteOrganizations) {
+  //   currentIndex = index;
+  //   notifyListeners();
+  //   if (index == 1) {
+  //     Navigator.push(
+  //       context,
+  //       MaterialPageRoute(
+  //         builder: (context) => FavoritesPage(
+  //           favoriteOrganizations: favoriteOrganizations,
+  //            onFavoritesUpdated: (updatedFavorites) {
+  //               // Sync updates with the global list
+  //               setState(() {
+  //                 favoriteOrganizations.clear();
+  //                 favoriteOrganizations.addAll(updatedFavorites);
+  //               });
+  //             },
+  //         ),
+  //       ),
+  //     );
+  //     // Navigator.pushNamed(context, '/favorites');
+  //   } else if (index == 2) {
+  //     Navigator.pushNamed(context, '/settings');
+  //   }
+  // }
 
   @override
   void dispose() {

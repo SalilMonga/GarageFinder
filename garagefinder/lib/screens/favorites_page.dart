@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class FavoritesPage extends StatefulWidget {
-  final List<Map<String, String>> favoriteOrganizations;
+  final List<Map<String, dynamic>> favoriteOrganizations;
   final ValueChanged<List<Map<String, String>>> onFavoritesUpdated;
 
   const FavoritesPage({
@@ -90,7 +90,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
         actions: [
           DropdownButton<String>(
             value: _sortOrder,
-            items: [
+            items: const [
               DropdownMenuItem(
                 value: 'Pinned',
                 child: Text('Pinned on Top'),

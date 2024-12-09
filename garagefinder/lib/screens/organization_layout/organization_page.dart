@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:garagefinder/screens/favorites_page.dart';
 import 'package:garagefinder/screens/organization_layout/components/organization_state.dart';
 import 'package:garagefinder/screens/organization_layout/components/welcome_page.dart';
 import 'package:provider/provider.dart';
@@ -26,9 +27,41 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
     });
   }
 
+  int currentIndex = 0; // Track the current index of the bottom nav
+  // List<Map<String, String>> favoriteOrganizations = []; // Global favorites list
+  // Handle Bottom Navigation
+  void onTabTapped(int index, BuildContext context,
+      List<Map<String, dynamic>> favoriteOrganizations) {
+    currentIndex = index;
+    // notifyListeners();
+    if (index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => FavoritesPage(
+            favoriteOrganizations: favoriteOrganizations,
+            onFavoritesUpdated: (updatedFavorites) {
+              // Sync updates with the global list
+              setState(() {
+                favoriteOrganizations.clear();
+                favoriteOrganizations.addAll(updatedFavorites);
+              });
+            },
+          ),
+        ),
+      );
+      // Navigator.pushNamed(context, '/favorites');
+    } else if (index == 2) {
+      Navigator.pushNamed(context, '/settings');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = context.watch<OrganizationState>();
+    // debugPrint(
+    //     'Favorite Organizations in build: ${state.favoriteOrganizations}');
+
     state.initialize(context);
     return Scaffold(
       appBar: AppBar(
@@ -63,17 +96,9 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       FavoriteOrganizations(
-                        favoriteOrganizations: state.favoriteOrganizations
-                            .map((org) => org.map(
-                                  (key, value) => MapEntry(
-                                    key,
-                                    value.toString(),
-                                  ),
-                                ))
-                            .toList(),
+                        favoriteOrganizations: state.favoriteOrganizations,
                         onRemoveFavorite: state.removeFavorite,
                       ),
-
                       const SizedBox(height: 16),
 
                       // Categories
@@ -99,9 +124,11 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
                       OrganizationList(
                         groupedOrganizations: state.groupedOrganizations,
                         sectionKeys: state.sectionKeys,
+                        favoriteOrganizations: state.favoriteOrganizations,
                         onFavoritesUpdated: (favorites) {
                           state.favoriteOrganizations =
                               favorites.cast<Map<String, dynamic>>();
+                          // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
                           state.notifyListeners();
                         },
                       ),
@@ -132,7 +159,8 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: state.currentIndex,
-        onTap: (index) => state.onTabTapped(index, context),
+        onTap: (index) =>
+            onTabTapped(index, context, state.favoriteOrganizations),
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
