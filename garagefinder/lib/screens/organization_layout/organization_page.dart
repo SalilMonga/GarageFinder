@@ -5,7 +5,7 @@ import 'package:garagefinder/screens/organization_layout/components/welcome_page
 import 'package:provider/provider.dart';
 import 'components/search_bar.dart';
 import 'components/organization_list.dart';
-import 'components/favorite_organizations_list_cards.dart';
+import 'components/favorite_org_cards.dart';
 import 'components/category_button_row.dart';
 import 'components/alpha_scroll.dart';
 
@@ -95,12 +95,44 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
-                      FavoriteOrganizations(
-                        favoriteOrganizations: state.favoriteOrganizations,
-                        onRemoveFavorite: state.removeFavorite,
-                      ),
+                      state.favoriteOrganizations.isEmpty
+                          ? Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    Icons.favorite_border_rounded,
+                                    size: 48,
+                                    color: Colors.grey, // Icon color
+                                  ),
+                                  const SizedBox(
+                                      height:
+                                          8), // Spacing between icon and text
+                                  Text(
+                                    'No Favorite Organizations',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.copyWith(
+                                          fontSize:
+                                              16, // Slightly smaller font size
+                                          fontWeight:
+                                              FontWeight.normal, // Remove bold
+                                          color: Colors
+                                              .grey, // Grey color for text
+                                        ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            )
+                          : FavoriteOrganizations(
+                              favoriteOrganizations:
+                                  state.favoriteOrganizations,
+                              onRemoveFavorite: state.removeFavorite,
+                            ),
                       const SizedBox(height: 16),
-
                       // Categories
                       const Text(
                         'Categories',
