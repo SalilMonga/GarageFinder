@@ -1,8 +1,9 @@
 // import 'package:flutter/material.dart';
-// import 'package:garagefinder/components/theme_notifier.dart';
 // import 'package:google_maps_flutter/google_maps_flutter.dart';
+// import 'package:provider/provider.dart';
+// import '../components/theme_notifier.dart';
 // import '../components/primary_button.dart';
-// import '../components/locations.dart' as locations;
+// import 'organization_layout/components/organization_state.dart';
 
 // class ParkingMap extends StatefulWidget {
 //   final String? schoolName;
@@ -16,39 +17,97 @@
 
 // class _ParkingMapState extends State<ParkingMap> {
 //   final Map<String, Marker> _markers = {};
+//   late GoogleMapController _mapController;
+//   Map<String, dynamic>?
+//       selectedOrganization; // To store the selected organization
 
-//   Future<void> _onMapCreated(GoogleMapController controller) async {
-//     try {
-//       final parkingGarages = await locations.getParkingGarages();
-//       setState(() {
-//         _markers.clear();
-//         for (final garage in parkingGarages.garages) {
+//   @override
+//   void initState() {
+//     super.initState();
+//     WidgetsBinding.instance.addPostFrameCallback((_) async {
+//       final organizationState =
+//           Provider.of<OrganizationState>(context, listen: false);
+//       await organizationState.fetchOrganizations(); // Ensure data is fetched
+//       _initializeMap(); // Initialize map after fetching data
+//     });
+//   }
+
+//   Future<void> _initializeMap() async {
+//     final organizationState =
+//         Provider.of<OrganizationState>(context, listen: false);
+//     final List<Map<String, dynamic>> organizations =
+//         organizationState.organizations;
+
+//     print('Organizations in initializeMap: $organizations');
+//     if (organizations.isNotEmpty) {
+//       _loadMarkers(organizations);
+
+//       // Find the selected organization using schoolName or schoolId
+//       selectedOrganization = organizations.firstWhere(
+//         (org) =>
+//             org['name'] == widget.schoolName ||
+//             org['id'].toString() == widget.schoolId,
+//         orElse: () => {},
+//       );
+
+//       if (selectedOrganization != null && selectedOrganization!.isNotEmpty) {
+//         _centerMapOnSchool(selectedOrganization!);
+//       } else {
+//         _showErrorState('School not found.');
+//       }
+//     } else {
+//       _showErrorState('No data available from the backend.');
+//     }
+//   }
+
+//   void _loadMarkers(List<Map<String, dynamic>> organizations) {
+//     setState(() {
+//       _markers.clear();
+//       for (final org in organizations) {
+//         final garages = org['garages'] ?? [];
+//         if (garages.isEmpty) continue;
+
+//         for (final garage in garages) {
+//           final lat = (garage['lat'] as num).toDouble(); // Cast to double
+//           final long = (garage['long'] as num).toDouble(); // Cast to double
+
 //           final marker = Marker(
-//             markerId: MarkerId(garage.name),
-//             position: LatLng(garage.lat, garage.lng),
+//             markerId: MarkerId('${org['name']}_${garage['name']}'),
+//             position: LatLng(lat, long),
 //             infoWindow: InfoWindow(
-//               title: garage.name,
-//               snippet: garage.address,
+//               title: garage['name'],
+//               snippet:
+//                   '${garage['address']} - Capacity: ${garage['capacity'] ?? 'Unknown'}',
 //             ),
 //           );
-//           _markers[garage.name] = marker;
+//           _markers[garage['name']] = marker;
 //         }
-//       });
-//     } catch (e) {
-//       if (mounted) {
-//         ScaffoldMessenger.of(context).showSnackBar(
-//           SnackBar(content: Text('Error loading parking garages: $e')),
-//         );
 //       }
-//     }
+//     });
+//   }
+
+//   void _centerMapOnSchool(Map<String, dynamic> school) {
+//     final lat = (school['lat'] as num).toDouble(); // Cast to double
+//     final long = (school['long'] as num).toDouble(); // Cast to double
+
+//     _mapController.animateCamera(
+//       CameraUpdate.newLatLng(
+//         LatLng(lat, long),
+//       ),
+//     );
+//   }
+
+//   void _showErrorState(String message) {
+//     ScaffoldMessenger.of(context).showSnackBar(
+//       SnackBar(content: Text(message)),
+//     );
 //   }
 
 //   @override
 //   Widget build(BuildContext context) {
 //     return Scaffold(
 //       appBar: AppBar(
-//         title: const Text('CSUN Parking Map'),
-//         elevation: 1,
+//         title: const Text('Parking Map'),
 //       ),
 //       body: SingleChildScrollView(
 //         child: Column(
@@ -57,34 +116,12 @@
 //             _buildHeaderSection(),
 //             _buildMapSection(),
 //             _buildButtonsSection(),
-//             _buildParkingStructuresSection(),
+//             if (selectedOrganization != null &&
+//                 selectedOrganization!['garages'] != null)
+//               _buildParkingStructuresSection(selectedOrganization!['garages']),
 //             _buildAdditionalInfoSection(),
 //           ],
 //         ),
-//       ),
-//       bottomNavigationBar: BottomNavigationBar(
-//         currentIndex: 0, // Highlight "Home" or update based on your app logic
-//         onTap: (index) {
-//           if (index == 1) {
-//             // Navigator.pushNamed(context, '/favorites');
-//           } else if (index == 2) {
-//             Navigator.pushNamed(context, '/settings');
-//           }
-//         },
-//         items: const [
-//           BottomNavigationBarItem(
-//             icon: Icon(Icons.home),
-//             label: 'Home',
-//           ),
-//           BottomNavigationBarItem(
-//             icon: Icon(Icons.star),
-//             label: 'Favorites',
-//           ),
-//           BottomNavigationBarItem(
-//             icon: Icon(Icons.settings),
-//             label: 'Settings',
-//           ),
-//         ],
 //       ),
 //     );
 //   }
@@ -105,11 +142,11 @@
 //             crossAxisAlignment: CrossAxisAlignment.start,
 //             children: [
 //               Text(
-//                 'CSUN Parking',
+//                 widget.schoolName ?? 'Parking Map',
 //                 style: Theme.of(context).textTheme.bodyLarge,
 //               ),
 //               Text(
-//                 'Parking Structures Map',
+//                 'View Parking Locations',
 //                 style: Theme.of(context).textTheme.bodyMedium,
 //               ),
 //             ],
@@ -130,10 +167,13 @@
 //         height: 200,
 //         child: GoogleMap(
 //           initialCameraPosition: const CameraPosition(
-//             target: LatLng(34.241, -118.528), // Centered around CSUN
+//             target: LatLng(34.241, -118.528), // Default fallback position
 //             zoom: 15,
 //           ),
-//           onMapCreated: _onMapCreated,
+//           onMapCreated: (controller) {
+//             _mapController = controller; // Initialize the controller
+//             _initializeMap(); // Re-run map initialization after the controller is ready
+//           },
 //           markers: _markers.values.toSet(),
 //         ),
 //       ),
@@ -147,15 +187,23 @@
 //         children: [
 //           const SizedBox(height: 8),
 //           PrimaryButton(
-//             text: 'Navigate to CSUN',
-//             onPressed: () => Navigator.pushNamed(context, '/garage'),
+//             text: 'Navigate to Garage Layout',
+//             fullWidth: true,
+//             onPressed: () => Navigator.pushNamed(
+//               context,
+//               '/garage',
+//               arguments: {
+//                 'schoolName': widget.schoolName,
+//                 'schoolId': widget.schoolId,
+//               },
+//             ),
 //           ),
 //         ],
 //       ),
 //     );
 //   }
 
-//   Widget _buildParkingStructuresSection() {
+//   Widget _buildParkingStructuresSection(List<Map<String, dynamic>> garages) {
 //     return Padding(
 //       padding: const EdgeInsets.all(16.0),
 //       child: Column(
@@ -166,12 +214,16 @@
 //             style: Theme.of(context).textTheme.bodyLarge,
 //           ),
 //           const SizedBox(height: 16),
-//           Row(
-//             children: [
-//               _buildParkingCard('Open', 'Parking Structure A', '500'),
-//               const SizedBox(width: 16),
-//               _buildParkingCard('Full', 'Parking Structure B', '300'),
-//             ],
+//           Wrap(
+//             spacing: 16, // Space between cards
+//             runSpacing: 16, // Space between rows
+//             children: garages.map((garage) {
+//               return _buildParkingCard(
+//                 garage['status'] ?? 'Unknown',
+//                 garage['name'] ?? 'Unknown Garage',
+//                 garage['capacity']?.toString() ?? 'Unknown',
+//               );
+//             }).toList(),
 //           ),
 //         ],
 //       ),
@@ -179,16 +231,16 @@
 //   }
 
 //   Widget _buildParkingCard(String status, String name, String capacity) {
-//     return Expanded(
+//     return SizedBox(
+//       width: MediaQuery.of(context).size.width * 0.45, // Adjust card width
 //       child: Card(
-//         color: Theme.of(context).cardTheme.color, // Use theme card color
-//         shadowColor:
-//             Theme.of(context).cardTheme.shadowColor, // Use theme shadow color
-//         elevation: 4, // Increased elevation for a more prominent shadow
+//         color: Theme.of(context).cardTheme.color,
+//         shadowColor: Theme.of(context).cardTheme.shadowColor,
+//         elevation: 4,
 //         shape: RoundedRectangleBorder(
 //           borderRadius: BorderRadius.circular(16),
 //           side: BorderSide(
-//             color: Colors.grey.shade300, // Subtle border for better contrast
+//             color: Colors.grey.shade300,
 //             width: 1,
 //           ),
 //         ),
@@ -200,8 +252,8 @@
 //               Container(
 //                 height: 100,
 //                 decoration: BoxDecoration(
-//                   color: Colors.grey.shade200, // Light gray for contrast
-//                   borderRadius: BorderRadius.circular(12), // Rounded corners
+//                   color: Colors.grey.shade200,
+//                   borderRadius: BorderRadius.circular(12),
 //                 ),
 //                 child: const Center(
 //                   child: Text(
@@ -267,7 +319,7 @@
 //                 child: Column(
 //                   children: [
 //                     Text(
-//                       'Check CSUN website',
+//                       'Check School Website',
 //                       style: TextStyle(fontSize: 14),
 //                     ),
 //                     Icon(Icons.info, color: Colors.blue),

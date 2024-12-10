@@ -57,7 +57,7 @@ class FavoriteOrganizationCard extends StatelessWidget {
                                 fit: BoxFit.cover,
                                 errorBuilder: (context, error, stackTrace) =>
                                     Image.asset(
-                                  'assets/images/ducati.jpg',
+                                  'assets/images/placeholder.jpg',
                                   height: 80,
                                   width: double.infinity,
                                   fit: BoxFit.cover,

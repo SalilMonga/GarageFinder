@@ -71,6 +71,7 @@ flutter:
     # - assets/images/ducati.jpg
     - assets/schools.json
     - assets/images/placeholder.jpg
+    - assets/images/ducati.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
