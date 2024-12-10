@@ -2,7 +2,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:garagefinder/components/theme_notifier.dart';
 import 'package:garagefinder/screens/homepage.dart';
-import 'package:garagefinder/screens/organization_layout/components/organization_state.dart';
 import 'package:garagefinder/screens/parking_layout/garage_layout_page.dart';
 import 'package:garagefinder/screens/login_page.dart';
 import 'package:garagefinder/screens/parking_map.dart';
@@ -18,9 +17,6 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeNotifier()),
-        ChangeNotifierProvider(
-            create: (_) =>
-                OrganizationState()), // Add OrganizationState provider
       ],
       child: const MyApp(),
     ),
@@ -40,8 +36,7 @@ class MyApp extends StatelessWidget {
             return MaterialApp(
               title: 'Garage Finder App',
               // initialRoute: '/login', // The first screen to load
-              initialRoute:
-                  '/homepage', // Set current test screen and uncomment
+              initialRoute: '/login', // Set current test screen and uncomment
               theme: themeNotifier.lightTheme, // Light Theme
               darkTheme: themeNotifier.darkTheme, // Dark Theme
               themeMode: themeNotifier.themeMode, // Current Theme Mode

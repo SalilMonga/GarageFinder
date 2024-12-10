@@ -238,6 +238,22 @@ class OrganizationState extends ChangeNotifier {
     }
   }
 
+  void resetState() {
+    // Clear all fields to their initial values
+    isLoading = true;
+    showWelcomeOverlay = true;
+    searchQuery = '';
+    selectedCategory = '';
+    currentIndex = 0;
+    organizations.clear();
+    favoriteOrganizations.clear();
+    groupedOrganizations.clear();
+    sectionKeys.clear();
+    pinnedOrganizations.clear();
+    alphabetTopOffset = 0.0;
+    notifyListeners();
+  }
+
   @override
   void dispose() {
     searchController.dispose();

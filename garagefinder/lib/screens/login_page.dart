@@ -2,7 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:garagefinder/components/text_field.dart';
 import 'package:garagefinder/components/primary_button.dart';
-import 'package:garagefinder/screens/organization_layout/organization_page.dart';
+import 'package:garagefinder/screens/homepage.dart';
+import 'package:garagefinder/screens/organization_layout/components/organization_state.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -45,14 +47,16 @@ class _LoginPageState extends State<LoginPage> {
           password: _passwordController.text.trim(),
         );
 
-        // Navigate to OrganizationsPage on successful login
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) => const OrganizationsPage(),
-        //   ),
-        // );
-        Navigator.pushNamed(context, '/homepage');
+        // Initialize OrganizationState
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChangeNotifierProvider(
+              create: (_) => OrganizationState(),
+              child: const HomePage(), // Navigate to the main HomePage
+            ),
+          ),
+        );
       } on FirebaseAuthException catch (e) {
         String errorMessage;
         if (e.code == 'user-not-found') {
@@ -60,7 +64,8 @@ class _LoginPageState extends State<LoginPage> {
         } else if (e.code == 'wrong-password') {
           errorMessage = 'Wrong password provided for that user.';
         } else {
-          errorMessage = 'An unexpected error occurred. Please try again.';
+          errorMessage =
+              'An unexpected error occurred in firebase. Please try again.';
         }
 
         // Show error message

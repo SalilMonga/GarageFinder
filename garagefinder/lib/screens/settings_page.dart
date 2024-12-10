@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:garagefinder/components/theme_notifier.dart';
+import 'package:garagefinder/screens/organization_layout/components/organization_state.dart';
 import 'package:provider/provider.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -172,9 +174,16 @@ class _SettingsPageState extends State<SettingsPage> {
               'Logout',
               style: TextStyle(color: Colors.red),
             ),
-            onTap: () {
-              // Handle logout
-              Navigator.pushNamed(context, '/login');
+            onTap: () async {
+              // Sign out the user
+              await FirebaseAuth.instance.signOut();
+
+              // Reset the application state
+              context.read<OrganizationState>().resetState();
+
+              // Navigate to the login screen, clearing the navigation stack
+              Navigator.pushNamedAndRemoveUntil(
+                  context, '/login', (route) => false);
             },
           ),
         ],

@@ -5,10 +5,10 @@ class WelcomePage extends StatefulWidget {
   final VoidCallback onAnimationComplete;
 
   const WelcomePage({
-    Key? key,
+    super.key,
     required this.firstName,
     required this.onAnimationComplete,
-  }) : super(key: key);
+  });
 
   @override
   _WelcomePageState createState() => _WelcomePageState();
