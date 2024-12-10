@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "68854093377",
+    "project_id": "garagefinder-6ab05",
+    "storage_bucket": "garagefinder-6ab05.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:68854093377:android:e8019c8078fc8f452818c0",
+        "android_client_info": {
+          "package_name": "com.example.garagefinder"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCH1b7o_o4j3mFj3zN6vjqFHqYyN_rDM4U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

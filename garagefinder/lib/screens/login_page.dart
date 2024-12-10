@@ -1,7 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:garagefinder/components/text_field.dart';
 import 'package:garagefinder/components/primary_button.dart';
-import 'package:garagefinder/screens/organization_list.dart';
+import 'package:garagefinder/screens/homepage.dart';
+import 'package:garagefinder/screens/organization_layout/components/organization_state.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -22,16 +25,56 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  void _validateAndLogin() {
+  // void _validateAndLoginNoFireBase() {
+  //   if (_formKey.currentState?.validate() ?? false) {
+  //     Navigator.push(
+  //       context,
+  //       MaterialPageRoute(
+  //         builder: (context) => const OrganizationsPage(),
+  //       ),
+  //     );
+  //     FocusScope.of(context).unfocus();
+  //   }
+  // }
+
+  void _validateAndLogin() async {
     if (_formKey.currentState?.validate() ?? false) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const OrganizationsPage(),
-        ),
-      );
-      FocusScope.of(context).unfocus();
+      try {
+        // Sign in with email and password
+        final userCredential =
+            await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: _usernameController.text.trim(),
+          password: _passwordController.text.trim(),
+        );
+
+        // Initialize OrganizationState
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChangeNotifierProvider(
+              create: (_) => OrganizationState(),
+              child: const HomePage(), // Navigate to the main HomePage
+            ),
+          ),
+        );
+      } on FirebaseAuthException catch (e) {
+        String errorMessage;
+        if (e.code == 'user-not-found') {
+          errorMessage = 'No user found for that email.';
+        } else if (e.code == 'wrong-password') {
+          errorMessage = 'Wrong password provided for that user.';
+        } else {
+          errorMessage =
+              'An unexpected error occurred in firebase. Please try again.';
+        }
+
+        // Show error message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorMessage)),
+        );
+      }
     }
+    FocusScope.of(context).unfocus(); // Hide keyboard
   }
 
   @override
@@ -57,12 +100,12 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   CustomTextField(
                     controller: _usernameController,
-                    labelText: 'Username',
-                    hintText: 'Enter your username',
-                    helperText: "Don't use special characters",
+                    labelText: 'Email',
+                    hintText: 'Enter your email',
+                    // helperText: "Don't use special characters",
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter your username';
+                        return 'Please enter your email';
                       }
                       return null;
                     },

@@ -1,0 +1,41 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "garagefinder-6ab05",
+          "appId": "1:68854093377:android:e8019c8078fc8f452818c0",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "garagefinder-6ab05",
+          "appId": "1:68854093377:ios:73e5c3331b64f8a72818c0",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "macos": {
+        "default": {
+          "projectId": "garagefinder-6ab05",
+          "appId": "1:68854093377:ios:73e5c3331b64f8a72818c0",
+          "uploadDebugSymbols": false,
+          "fileOutput": "macos/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "garagefinder-6ab05",
+          "configurations": {
+            "android": "1:68854093377:android:e8019c8078fc8f452818c0",
+            "ios": "1:68854093377:ios:73e5c3331b64f8a72818c0",
+            "macos": "1:68854093377:ios:73e5c3331b64f8a72818c0",
+            "web": "1:68854093377:web:cf7066668adeba562818c0",
+            "windows": "1:68854093377:web:4abca6bb42a850ac2818c0"
+          }
+        }
+      }
+    }
+  }
+}

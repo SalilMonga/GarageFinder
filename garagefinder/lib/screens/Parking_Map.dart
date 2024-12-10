@@ -1,11 +1,16 @@
+// ignore: file_names
 import 'package:flutter/material.dart';
-import 'package:garagefinder/components/theme_notifier.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:provider/provider.dart';
+import '../components/theme_notifier.dart';
 import '../components/primary_button.dart';
-import '../components/locations.dart' as locations;
+import 'organization_layout/components/organization_state.dart';
 
 class ParkingMap extends StatefulWidget {
-  const ParkingMap({super.key});
+  final String? schoolName;
+  final String? schoolId;
+
+  const ParkingMap({super.key, this.schoolName, this.schoolId});
 
   @override
   _ParkingMapState createState() => _ParkingMapState();
@@ -13,39 +18,93 @@ class ParkingMap extends StatefulWidget {
 
 class _ParkingMapState extends State<ParkingMap> {
   final Map<String, Marker> _markers = {};
+  late GoogleMapController _mapController;
+  Map<String, dynamic>? selectedOrganization;
 
-  Future<void> _onMapCreated(GoogleMapController controller) async {
-    try {
-      final parkingGarages = await locations.getParkingGarages();
-      setState(() {
-        _markers.clear();
-        for (final garage in parkingGarages.garages) {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final organizationState =
+          Provider.of<OrganizationState>(context, listen: false);
+      await organizationState.fetchOrganizations(); // Ensure data is fetched
+    });
+  }
+
+  Future<void> _initializeMap() async {
+    final organizationState =
+        Provider.of<OrganizationState>(context, listen: false);
+    final List<Map<String, dynamic>> organizations =
+        organizationState.organizations;
+    // print('Organizations in initilizeMap: $organizations');
+    if (organizations.isNotEmpty) {
+      _loadMarkers(organizations);
+
+      // Find the selected organization using schoolName or schoolId
+      selectedOrganization = organizations.firstWhere(
+        (org) =>
+            org['name'] == widget.schoolName ||
+            org['id'].toString() == widget.schoolId,
+        orElse: () => {},
+      );
+
+      if (selectedOrganization != null && selectedOrganization!.isNotEmpty) {
+        _centerMapOnSchool(selectedOrganization!);
+      } else {
+        _showErrorState('School not found.');
+      }
+    } else {
+      _showErrorState('No data available from the backend.');
+    }
+  }
+
+  void _loadMarkers(List<Map<String, dynamic>> organizations) {
+    setState(() {
+      _markers.clear();
+      for (final org in organizations) {
+        final garages = org['garages'] ?? [];
+        if (garages.isEmpty) continue;
+
+        for (final garage in garages) {
+          final lat = (garage['lat'] as num).toDouble(); // Cast to double
+          final long = (garage['long'] as num).toDouble(); // Cast to double
+
           final marker = Marker(
-            markerId: MarkerId(garage.name),
-            position: LatLng(garage.lat, garage.lng),
+            markerId: MarkerId('${org['name']}_${garage['name']}'),
+            position: LatLng(lat, long),
             infoWindow: InfoWindow(
-              title: garage.name,
-              snippet: garage.address,
+              title: garage['name'],
+              snippet: 'Capacity: ${garage['capacity'] ?? 'Unknown'}',
             ),
           );
-          _markers[garage.name] = marker;
+          _markers[garage['name']] = marker;
         }
-      });
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error loading parking garages: $e')),
-        );
       }
-    }
+    });
+  }
+
+  void _centerMapOnSchool(Map<String, dynamic> school) {
+    final lat = (school['lat'] as num).toDouble(); // Cast to double
+    final long = (school['long'] as num).toDouble(); // Cast to double
+
+    _mapController.animateCamera(
+      CameraUpdate.newLatLng(
+        LatLng(lat, long),
+      ),
+    );
+  }
+
+  void _showErrorState(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('CSUN Parking Map'),
-        elevation: 1,
+        title: const Text('Parking Map'),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -54,34 +113,12 @@ class _ParkingMapState extends State<ParkingMap> {
             _buildHeaderSection(),
             _buildMapSection(),
             _buildButtonsSection(),
-            _buildParkingStructuresSection(),
+            if (selectedOrganization != null &&
+                selectedOrganization!['garages'] != null)
+              _buildParkingStructuresSection(selectedOrganization!['garages']),
             _buildAdditionalInfoSection(),
           ],
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0, // Highlight "Home" or update based on your app logic
-        onTap: (index) {
-          if (index == 1) {
-            // Navigator.pushNamed(context, '/favorites');
-          } else if (index == 2) {
-            Navigator.pushNamed(context, '/settings');
-          }
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.star),
-            label: 'Favorites',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
-        ],
       ),
     );
   }
@@ -102,11 +139,11 @@ class _ParkingMapState extends State<ParkingMap> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'CSUN Parking',
+                widget.schoolName ?? 'Parking Map',
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
               Text(
-                'Parking Structures Map',
+                'View Parking Locations',
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
             ],
@@ -127,10 +164,13 @@ class _ParkingMapState extends State<ParkingMap> {
         height: 200,
         child: GoogleMap(
           initialCameraPosition: const CameraPosition(
-            target: LatLng(34.241, -118.528), // Centered around CSUN
+            target: LatLng(34.241, -118.528), // Default fallback position
             zoom: 15,
           ),
-          onMapCreated: _onMapCreated,
+          onMapCreated: (controller) {
+            _mapController = controller; // Initialize the controller
+            _initializeMap(); // Re-run map initialization after the controller is ready
+          },
           markers: _markers.values.toSet(),
         ),
       ),
@@ -144,15 +184,42 @@ class _ParkingMapState extends State<ParkingMap> {
         children: [
           const SizedBox(height: 8),
           PrimaryButton(
-            text: 'Navigate to CSUN',
-            onPressed: () => Navigator.pushNamed(context, '/garage'),
+            text: 'Navigate to Garage Layout',
+            fullWidth: true,
+            onPressed: () => Navigator.pushNamed(
+              context,
+              '/garage',
+              arguments: {
+                'schoolName': widget.schoolName,
+                'schoolId': widget.schoolId,
+              },
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildParkingStructuresSection() {
+  Widget _buildParkingStructuresSection(dynamic garages) {
+    // Ensure garages is a List<Map<String, dynamic>> before proceeding
+    if (garages is! List<Map<String, dynamic>>) {
+      try {
+        garages = (garages as List<dynamic>)
+            .cast<Map<String, dynamic>>(); // Safely cast to the required type
+      } catch (e) {
+        print('Error casting garages: $e');
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            'Invalid garage data.',
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: Colors.red,
+                ),
+          ),
+        );
+      }
+    }
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -163,12 +230,25 @@ class _ParkingMapState extends State<ParkingMap> {
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           const SizedBox(height: 16),
-          Row(
-            children: [
-              _buildParkingCard('Open', 'Parking Structure A', '500'),
-              const SizedBox(width: 16),
-              _buildParkingCard('Full', 'Parking Structure B', '300'),
-            ],
+          GridView.builder(
+            shrinkWrap: true,
+            physics:
+                const NeverScrollableScrollPhysics(), // Disable scrolling inside the grid
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2, // Number of cards per row
+              crossAxisSpacing: 16.0, // Spacing between cards horizontally
+              mainAxisSpacing: 16.0, // Spacing between cards vertically
+              childAspectRatio: 3 / 4, // Adjust the ratio for card size
+            ),
+            itemCount: garages.length,
+            itemBuilder: (context, index) {
+              final garage = garages[index];
+              return _buildParkingCard(
+                garage['status'] ?? 'Unknown',
+                garage['name'] ?? 'Unknown Garage',
+                garage['capacity']?.toString() ?? 'Unknown',
+              );
+            },
           ),
         ],
       ),
@@ -176,7 +256,8 @@ class _ParkingMapState extends State<ParkingMap> {
   }
 
   Widget _buildParkingCard(String status, String name, String capacity) {
-    return Expanded(
+    return SizedBox(
+      width: MediaQuery.of(context).size.width * 0.45, // Adjust card width
       child: Card(
         color: Theme.of(context).cardTheme.color, // Use theme card color
         shadowColor:
@@ -264,7 +345,7 @@ class _ParkingMapState extends State<ParkingMap> {
                 child: Column(
                   children: [
                     Text(
-                      'Check CSUN website',
+                      'Check School Website',
                       style: TextStyle(fontSize: 14),
                     ),
                     Icon(Icons.info, color: Colors.blue),

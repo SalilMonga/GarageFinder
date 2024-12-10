@@ -24,7 +24,8 @@ android {
         applicationId = "com.example.garagefinder"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+        // minSdk = flutter.minSdkVersion
+        minSdkVersion 23 
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -39,6 +40,17 @@ android {
     }
 }
 
+dependencies {
+    // Ensure Firebase dependencies match your `pubspec.yaml`
+    implementation platform('com.google.firebase:firebase-bom:32.0.0')
+    implementation 'com.google.firebase:firebase-auth'
+    implementation 'com.google.firebase:firebase-firestore'
+}
+
+
 flutter {
     source = "../.."
 }
+
+// Add this line at the bottom
+apply plugin: 'com.google.gms.google-services'

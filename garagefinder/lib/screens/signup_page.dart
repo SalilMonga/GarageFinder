@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:garagefinder/components/text_field.dart';
 import 'package:garagefinder/components/primary_button.dart';
@@ -25,14 +26,63 @@ class _SignUpPageState extends State<SignUpPage> {
     super.dispose();
   }
 
-  void _validateAndSignUp() {
+  // void _validateAndSignUpWithoutFirebase() {
+  //   if (_formKey.currentState?.validate() ?? false) {
+  //     // Perform sign-up logic here
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text('Account created successfully!')),
+  //     );
+  //     FocusScope.of(context).unfocus();
+  //     Navigator.pop(context); // Navigate back to login or another page
+  //   }
+  // }
+
+  void _validateAndSignUp() async {
     if (_formKey.currentState?.validate() ?? false) {
-      // Perform sign-up logic here
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Account created successfully!')),
-      );
-      FocusScope.of(context).unfocus();
-      Navigator.pop(context); // Navigate back to login or another page
+      try {
+        // Create user with email and password
+        final userCredential =
+            await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
+        );
+
+        // Set display name (optional)
+        await userCredential.user
+            ?.updateDisplayName(_usernameController.text.trim());
+
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(
+                  'Welcome, ${_usernameController.text}! Account created successfully.')),
+        );
+
+        // Navigate to login or next page
+        Navigator.pushNamed(context, '/organizations'); // Update as needed
+      } on FirebaseAuthException catch (e) {
+        String errorMessage;
+        if (e.code == 'email-already-in-use') {
+          errorMessage = 'The email is already in use. Please try another one.';
+        } else if (e.code == 'weak-password') {
+          errorMessage = 'The password is too weak.';
+        } else if (e.code == 'invalid-email') {
+          errorMessage = 'The email address is invalid.';
+        } else {
+          errorMessage = 'An unexpected error occurred. Please try again.';
+        }
+
+        // Show error message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorMessage)),
+        );
+      } catch (e) {
+        // Catch other errors
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('An error occurred. Please try again later.')),
+        );
+      }
     }
   }
 

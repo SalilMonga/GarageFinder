@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:garagefinder/components/theme_notifier.dart';
+import 'package:garagefinder/screens/organization_layout/components/organization_state.dart';
 import 'package:provider/provider.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -10,22 +12,22 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  int _currentIndex = 2; // Track the currently selected tab
+  // int _currentIndex = 2; // Track the currently selected tab
 
-  void _onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index; // Update the current index
-    });
+  // void _onTabTapped(int index) {
+  //   setState(() {
+  //     _currentIndex = index; // Update the current index
+  //   });
 
-    // Navigate based on the tapped index
-    if (index == 0) {
-      Navigator.pushNamed(context, '/organizations'); // Navigate to Home
-    } else if (index == 1) {
-      // Navigator.pushNamed(context, '/favorites'); // Navigate to Favorites
-    } else if (index == 2) {
-      // Navigator.pushNamed(context, '/settings'); // Navigate to Settings
-    }
-  }
+  //   // Navigate based on the tapped index
+  //   if (index == 0) {
+  //     Navigator.pushNamed(context, '/organizations'); // Navigate to Home
+  //   } else if (index == 1) {
+  //     // Navigator.pushNamed(context, '/favorites'); // Navigate to Favorites
+  //   } else if (index == 2) {
+  //     // Navigator.pushNamed(context, '/settings'); // Navigate to Settings
+  //   }
+  // }
 
   void _showThemeSelectionModal(BuildContext context) {
     final themeNotifier = Provider.of<ThemeNotifier>(context, listen: false);
@@ -172,42 +174,49 @@ class _SettingsPageState extends State<SettingsPage> {
               'Logout',
               style: TextStyle(color: Colors.red),
             ),
-            onTap: () {
-              // Handle logout
-              Navigator.pushNamed(context, '/login');
+            onTap: () async {
+              // Sign out the user
+              await FirebaseAuth.instance.signOut();
+
+              // Reset the application state
+              context.read<OrganizationState>().resetState();
+
+              // Navigate to the login screen, clearing the navigation stack
+              Navigator.pushNamedAndRemoveUntil(
+                  context, '/login', (route) => false);
             },
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        // currentIndex: 2, // Index for the Settings Page
-        // onTap: (index) {
-        //   if (index == 0) {
-        //     Navigator.pushNamed(context, '/organizations'); // Navigate to Home
-        //   } else if (index == 1) {
-        //     // Navigator.pushNamed(context, '/favorites'); // Navigate to Favorites
-        //   } else if (index == 2) {
-        //     // Stay on Settings Page
-        //   }
-        // },
-        currentIndex: _currentIndex, // Highlight the active tab
-        //TODO: ontapping the selected screen icon again, just go to the top of the screen.
-        onTap: _onTabTapped,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.star),
-            label: 'Favorites',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
-        ],
-      ),
+      // bottomNavigationBar: BottomNavigationBar(
+      //   // currentIndex: 2, // Index for the Settings Page
+      //   // onTap: (index) {
+      //   //   if (index == 0) {
+      //   //     Navigator.pushNamed(context, '/organizations'); // Navigate to Home
+      //   //   } else if (index == 1) {
+      //   //     // Navigator.pushNamed(context, '/favorites'); // Navigate to Favorites
+      //   //   } else if (index == 2) {
+      //   //     // Stay on Settings Page
+      //   //   }
+      //   // },
+      //   currentIndex: _currentIndex, // Highlight the active tab
+      //   //TODO: ontapping the selected screen icon again, just go to the top of the screen.
+      //   onTap: _onTabTapped,
+      //   items: const [
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.home),
+      //       label: 'Home',
+      //     ),
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.star),
+      //       label: 'Favorites',
+      //     ),
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.settings),
+      //       label: 'Settings',
+      //     ),
+      //   ],
+      // ),
     );
   }
 }

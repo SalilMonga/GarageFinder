@@ -1,3 +1,3 @@
 [submodule "backend"]
 	path = backend
-	url = git@github.com:SalilMonga/GarageFinder-backend.git
+	url = https://github.com/SalilMonga/GarageFinder-backend.git
