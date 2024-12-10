@@ -1,0 +1,338 @@
+[
+  {
+    "id": 1,
+    "name": "Arizona State University",
+    "type": "Public",
+    "location": "Tempe",
+    "image": "https://example.com/images/arizona_state.jpg",
+    "lat": 33.4255,
+    "long": -111.94,
+    "garages": []
+  },
+  {
+    "id": 2,
+    "name": "Boston University",
+    "type": "Private",
+    "location": "Boston",
+    "image": "https://example.com/images/boston.jpg",
+    "lat": 42.3505,
+    "long": -71.1054,
+    "garages": []
+  },
+  {
+    "id": 3,
+    "name": "California State University, Fresno",
+    "type": "Public",
+    "location": "Fresno",
+    "image": "https://example.com/images/fresno.jpg",
+    "lat": 36.7683,
+    "long": -119.7881,
+    "garages": []
+  },
+  {
+    "id": 4,
+    "name": "Duke University",
+    "type": "Private",
+    "location": "Durham",
+    "image": "https://example.com/images/duke.jpg",
+    "lat": 36.0014,
+    "long": -78.9382,
+    "garages": []
+  },
+  {
+    "id": 5,
+    "name": "Emory University",
+    "type": "Private",
+    "location": "Atlanta",
+    "image": "https://example.com/images/emory.jpg",
+    "lat": 33.7921,
+    "long": -84.322,
+    "garages": []
+  },
+  {
+    "id": 6,
+    "name": "Florida State University",
+    "type": "Public",
+    "location": "Tallahassee",
+    "image": "https://example.com/images/fsu.jpg",
+    "lat": 30.4419,
+    "long": -84.2807,
+    "garages": []
+  },
+  {
+    "id": 7,
+    "name": "Georgetown University",
+    "type": "Private",
+    "location": "Washington, D.C.",
+    "image": "https://example.com/images/georgetown.jpg",
+    "lat": 38.9101,
+    "long": -77.0736,
+    "garages": []
+  },
+  {
+    "id": 8,
+    "name": "Harvard University",
+    "type": "Private",
+    "location": "Cambridge",
+    "image": "https://example.com/images/harvard.jpg",
+    "lat": 42.3736,
+    "long": -71.1097,
+    "garages": []
+  },
+  {
+    "id": 9,
+    "name": "Indiana University Bloomington",
+    "type": "Public",
+    "location": "Bloomington",
+    "image": "https://example.com/images/indiana.jpg",
+    "lat": 39.1653,
+    "long": -86.5264,
+    "garages": []
+  },
+  {
+    "id": 10,
+    "name": "Johns Hopkins University",
+    "type": "Private",
+    "location": "Baltimore",
+    "image": "https://example.com/images/jhu.jpg",
+    "lat": 39.3295,
+    "long": -76.6188,
+    "garages": []
+  },
+  {
+    "id": 11,
+    "name": "Kansas State University",
+    "type": "Public",
+    "location": "Manhattan",
+    "image": "https://example.com/images/kansas_state.jpg",
+    "lat": 39.1853,
+    "long": -96.5827,
+    "garages": []
+  },
+  {
+    "id": 12,
+    "name": "Loyola University Chicago",
+    "type": "Private",
+    "location": "Chicago",
+    "image": "https://example.com/images/loyola.jpg",
+    "lat": 41.8692,
+    "long": -87.6262,
+    "garages": []
+  },
+  {
+    "id": 13,
+    "name": "Michigan State University",
+    "type": "Public",
+    "location": "East Lansing",
+    "image": "https://example.com/images/michigan_state.jpg",
+    "lat": 42.7363,
+    "long": -84.4839,
+    "garages": []
+  },
+  {
+    "id": 14,
+    "name": "New York University",
+    "type": "Private",
+    "location": "New York City",
+    "image": "https://example.com/images/nyu.jpg",
+    "lat": 40.7306,
+    "long": -73.9352,
+    "garages": []
+  },
+  {
+    "id": 15,
+    "name": "Ohio State University",
+    "type": "Public",
+    "location": "Columbus",
+    "image": "https://example.com/images/ohio_state.jpg",
+    "lat": 40.0016,
+    "long": -83.017,
+    "garages": []
+  },
+  {
+    "id": 16,
+    "name": "Purdue University",
+    "type": "Public",
+    "location": "West Lafayette",
+    "image": "https://example.com/images/purdue.jpg",
+    "lat": 40.4251,
+    "long": -86.909,
+    "garages": []
+  },
+  {
+    "id": 17,
+    "name": "Quinnipiac University",
+    "type": "Private",
+    "location": "Hamden",
+    "image": "https://example.com/images/quinnipiac.jpg",
+    "lat": 41.3603,
+    "long": -72.9244,
+    "garages": []
+  },
+  {
+    "id": 18,
+    "name": "Rice University",
+    "type": "Private",
+    "location": "Houston",
+    "image": "https://example.com/images/rice.jpg",
+    "lat": 29.7174,
+    "long": -95.4009,
+    "garages": []
+  },
+  {
+    "id": 19,
+    "name": "Stanford University",
+    "type": "Private",
+    "location": "Stanford",
+    "image": "https://example.com/images/stanford.jpg",
+    "lat": 37.4275,
+    "long": -122.1697,
+    "garages": []
+  },
+  {
+    "id": 20,
+    "name": "Texas A&M University",
+    "type": "Public",
+    "location": "College Station",
+    "image": "https://example.com/images/texas_am.jpg",
+    "lat": 30.6274,
+    "long": -96.3344,
+    "garages": []
+  },
+  {
+    "id": 21,
+    "name": "University of California, Berkeley",
+    "type": "Public",
+    "location": "Berkeley",
+    "image": "https://example.com/images/berkeley.jpg",
+    "lat": 37.8716,
+    "long": -122.2727,
+    "garages": []
+  },
+  {
+    "id": 22,
+    "name": "University of Florida",
+    "type": "Public",
+    "location": "Gainesville",
+    "image": "https://example.com/images/uf.jpg",
+    "lat": 29.6516,
+    "long": -82.3248,
+    "garages": []
+  },
+  {
+    "id": 23,
+    "name": "University of Michigan",
+    "type": "Public",
+    "location": "Ann Arbor",
+    "image": "https://example.com/images/umich.jpg",
+    "lat": 42.278,
+    "long": -83.7382,
+    "garages": []
+  },
+  {
+    "id": 24,
+    "name": "Vanderbilt University",
+    "type": "Private",
+    "location": "Nashville",
+    "image": "https://example.com/images/vanderbilt.jpg",
+    "lat": 36.1447,
+    "long": -86.8029,
+    "garages": []
+  },
+  {
+    "id": 25,
+    "name": "Washington University in St. Louis",
+    "type": "Private",
+    "location": "St. Louis",
+    "image": "https://example.com/images/wustl.jpg",
+    "lat": 38.6499,
+    "long": -90.3051,
+    "garages": []
+  },
+  {
+    "id": 26,
+    "name": "Xavier University",
+    "type": "Private",
+    "location": "Cincinnati",
+    "image": "https://example.com/images/xavier.jpg",
+    "lat": 39.1585,
+    "long": -84.5081,
+    "garages": []
+  },
+  {
+    "id": 27,
+    "name": "Yale University",
+    "type": "Private",
+    "location": "New Haven",
+    "image": "https://example.com/images/yale.jpg",
+    "lat": 41.3163,
+    "long": -72.9223,
+    "garages": []
+  },
+  {
+    "id": 28,
+    "name": "Zhejiang University",
+    "type": "Public",
+    "location": "Hangzhou",
+    "image": "https://example.com/images/zhejiang.jpg",
+    "lat": 30.272,
+    "long": 120.1547,
+    "garages": []
+  },
+  {
+    "id": 29,
+    "name": "University of Chicago",
+    "type": "Private",
+    "location": "Chicago",
+    "image": "https://example.com/images/chicago.jpg",
+    "lat": 41.7886,
+    "long": -87.5987,
+    "garages": []
+  },
+  {
+    "id": 30,
+    "name": "University of California, Los Angeles",
+    "type": "Public",
+    "location": "Los Angeles",
+    "image": "https://example.com/images/ucla.jpg",
+    "lat": 34.0689,
+    "long": -118.4452,
+    "garages": [
+      {
+        "name": "Parking Structure 4",
+        "lat": 34.0701,
+        "lng": -118.4437,
+        "address": "Parking Structure 4, UCLA"
+      },
+      {
+        "name": "Parking Structure 7",
+        "lat": 34.0701,
+        "lng": -118.4437,
+        "address": "Parking Structure 7, UCLA"
+      }
+    ]
+  },
+  {
+    "id": 31,
+    "name": "California State University, Northridge",
+    "type": "Public",
+    "location": "Northridge",
+    "image": "https://example.com/images/northridge.jpg",
+    "lat": 34.2381,
+    "long": -118.5277,
+    "garages": [
+      {
+        "name": "B3 Parking Garage",
+        "lat": 34.238244785914915,
+        "lng": -118.53246214695403,
+        "address": "B3 Parking Structure, CSUN"
+      },
+      {
+        "name": "G3 Parking Garage",
+        "lat": 34.23819156839615,
+        "lng": -118.52537038632633,
+        "address": "G3 Parking Structure, CSUN"
+      }
+    ]
+  }
+]

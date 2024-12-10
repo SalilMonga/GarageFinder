@@ -35,15 +35,19 @@ class OrganizationState extends ChangeNotifier {
 
     try {
       final response = await http.get(Uri.parse(url));
-
       if (response.statusCode == 200) {
         final List<dynamic> jsonData = json.decode(response.body);
+        print("Received data: $jsonData");
         organizations = jsonData.map((data) {
           return {
+            'id': data['id'] ?? '',
             'name': data['name'] ?? '',
             'type': data['type'] ?? '',
             'location': data['location'] ?? '',
             'image': data['image'] ?? '',
+            'lat': data['lat'] ?? 0.0,
+            'long': data['long'] ?? 0.0,
+            'garages': data['garages'] ?? [], // Include garages
           };
         }).toList();
 
@@ -56,7 +60,6 @@ class OrganizationState extends ChangeNotifier {
       print('Error fetching organizations: $e');
       isLoading = false; // Handle error by stopping the loader
     } finally {
-      debugPrint('Favorite Organizations: $favoriteOrganizations');
       isLoading = false;
       notifyListeners();
     }

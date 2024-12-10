@@ -8,6 +8,8 @@ class OrganizationList extends StatefulWidget {
   final Map<String, GlobalKey> sectionKeys;
   final Function(List<Map<String, dynamic>>)
       onFavoritesUpdated; // Callback to update favorites
+  final Function(Map<String, dynamic>)
+      onOrganizationTap; // Callback for organization tap
 
   const OrganizationList({
     super.key,
@@ -15,10 +17,9 @@ class OrganizationList extends StatefulWidget {
     required this.groupedOrganizations,
     required this.sectionKeys,
     required this.onFavoritesUpdated,
+    required this.onOrganizationTap,
   });
 
-  // @override
-  // State<OrganizationList> createState() => _OrganizationListState();
   @override
   State<OrganizationList> createState() {
     return _OrganizationListState();
@@ -26,12 +27,6 @@ class OrganizationList extends StatefulWidget {
 }
 
 class _OrganizationListState extends State<OrganizationList> {
-  void _updateFavorites() {
-    widget.onFavoritesUpdated(
-      widget.favoriteOrganizations.toList(), // Pass list of maps
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     List<String> alphabet = widget.groupedOrganizations.keys.toList()..sort();
@@ -40,32 +35,28 @@ class _OrganizationListState extends State<OrganizationList> {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: alphabet
-          .map((letter) => _buildSection(
-                context,
-                letter,
-                widget.groupedOrganizations[letter],
-                sectionKeys,
-              ))
-          .toList(),
+      children: alphabet.map((letter) {
+        final organizations = widget.groupedOrganizations[letter];
+        if (organizations == null || organizations.isEmpty) return Container();
+
+        return _buildSection(
+          context,
+          letter,
+          organizations,
+          sectionKeys,
+        );
+      }).toList(),
     );
   }
 
   Widget _buildSection(
-      BuildContext context,
-      String letter,
-      List<Map<String, dynamic>>? organizations,
-      Map<String, GlobalKey> sectionKeys) {
-    if (organizations == null || organizations.isEmpty) {
-      return Container(); // If no organizations for the letter, return an empty container
-    }
-    // if (!sectionKeys.containsKey(letter)) {
-    //   sectionKeys[letter] = GlobalKey(debugLabel: 'SectionKey_$letter');
-    // }
-
+    BuildContext context,
+    String letter,
+    List<Map<String, dynamic>> organizations,
+    Map<String, GlobalKey> sectionKeys,
+  ) {
     final GlobalKey sectionKey = sectionKeys[letter]!;
-    // print(
-    //     'Assigning sectionKey for letter: $letter -> $widget.sectionKeysOrgList');
+
     return Column(
       key: sectionKey,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,9 +66,13 @@ class _OrganizationListState extends State<OrganizationList> {
           style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         ...organizations.map((org) {
-          final name = org['name'] ?? '';
-          final location = org['location'] ?? '';
-          return _buildOrganizationItem(context, name, location);
+          return GestureDetector(
+            onTap: () => widget.onOrganizationTap(org), // Trigger callback
+            child: _buildOrganizationItem(
+              context,
+              org,
+            ),
+          );
         }),
         const SizedBox(height: 8),
       ],
@@ -85,21 +80,22 @@ class _OrganizationListState extends State<OrganizationList> {
   }
 
   Widget _buildOrganizationItem(
-      BuildContext context, String name, String location) {
+    BuildContext context,
+    Map<String, dynamic> org,
+  ) {
     final organizationState =
         Provider.of<OrganizationState>(context, listen: false);
-    final org = {'name': name, 'location': location};
     final isFavorite = organizationState.favoriteOrganizations
-        .any((fav) => fav['name'] == name);
+        .any((fav) => fav['name'] == org['name']);
 
     return ListTile(
       leading: const Icon(Icons.school),
       title: Text(
-        name,
+        org['name'] ?? '',
         style: Theme.of(context).textTheme.bodyLarge,
       ),
       subtitle: Text(
-        location,
+        org['location'] ?? '',
         style: Theme.of(context).textTheme.bodyMedium,
       ),
       trailing: IconButton(

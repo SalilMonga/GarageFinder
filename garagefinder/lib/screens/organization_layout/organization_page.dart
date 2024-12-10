@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:garagefinder/screens/favorites_page.dart';
+// import 'package:garagefinder/screens/favorites_page.dart';
 import 'package:garagefinder/screens/organization_layout/components/organization_state.dart';
 import 'package:garagefinder/screens/organization_layout/components/welcome_page.dart';
 import 'package:provider/provider.dart';
@@ -27,34 +27,27 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
     });
   }
 
-  int currentIndex = 0; // Track the current index of the bottom nav
-  // List<Map<String, String>> favoriteOrganizations = []; // Global favorites list
-  // Handle Bottom Navigation
-  void onTabTapped(int index, BuildContext context,
-      List<Map<String, dynamic>> favoriteOrganizations) {
-    currentIndex = index;
-    // notifyListeners();
-    if (index == 1) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const FavoritesPage(
-              // favoriteOrganizations: favoriteOrganizations,
-              // onFavoritesUpdated: (updatedFavorites) {
-              //   // Sync updates with the global list
-              //   setState(() {
-              //     favoriteOrganizations.clear();
-              //     favoriteOrganizations.addAll(updatedFavorites);
-              //   });
-              // },
-              ),
-        ),
-      );
-      // Navigator.pushNamed(context, '/favorites');
-    } else if (index == 2) {
-      // Navigator.pushNamed(context, '/settings');
-    }
-  }
+  // int currentIndex = 0; // Track the current index of the bottom nav
+  // // List<Map<String, String>> favoriteOrganizations = []; // Global favorites list
+  // // Handle Bottom Navigation
+  // void onTabTapped(int index, BuildContext context,
+  //     List<Map<String, dynamic>> favoriteOrganizations) {
+  //   currentIndex = index;
+  //   // notifyListeners();
+  //   if (index == 1) {
+  //     Navigator.push(
+  //       context,
+  //       MaterialPageRoute(
+  //         builder: (context) => const FavoritesPage(
+
+  //             ),
+  //       ),
+  //     );
+  //     // Navigator.pushNamed(context, '/favorites');
+  //   } else if (index == 2) {
+  //     // Navigator.pushNamed(context, '/settings');
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -169,6 +162,17 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
                             // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
                             state.notifyListeners();
                           },
+                          onOrganizationTap: (org) {
+                            Navigator.pushNamed(
+                              context,
+                              '/parking',
+                              arguments: {
+                                'schoolName': org['name'],
+                                'schoolId': org[
+                                    'id'], // Ensure 'id' is part of the org data
+                              },
+                            );
+                          },
                         ),
                     ],
                   ),
@@ -195,25 +199,6 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
             ),
         ],
       ),
-      // bottomNavigationBar: BottomNavigationBar(
-      //   currentIndex: state.currentIndex,
-      //   onTap: (index) =>
-      //       onTabTapped(index, context, state.favoriteOrganizations),
-      //   items: const [
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.home),
-      //       label: 'Home',
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.star),
-      //       label: 'Favorite',
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.settings),
-      //       label: 'Settings',
-      //     ),
-      //   ],
-      // ),
     );
   }
 }
