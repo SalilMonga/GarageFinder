@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../components/theme_notifier.dart';
 import '../components/primary_button.dart';
 import 'organization_layout/components/organization_state.dart';
+import 'dart:math';
 
 class ParkingMap extends StatefulWidget {
   final String? schoolName;
@@ -255,20 +256,30 @@ class _ParkingMapState extends State<ParkingMap> {
     );
   }
 
+  final List<String> placeholderImages = [
+    'assets/images/garagePlaceholder1.jpg',
+    'assets/images/garagePlaceholder2.jpg',
+    'assets/images/garagePlaceholder3.jpg',
+  ];
   Widget _buildParkingCard(String status, String name, String capacity) {
+    final random = Random();
+    final imagePath =
+        placeholderImages[random.nextInt(placeholderImages.length)];
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.45, // Adjust card width
-      child: Card(
-        color: Theme.of(context).cardTheme.color, // Use theme card color
-        shadowColor:
-            Theme.of(context).cardTheme.shadowColor, // Use theme shadow color
-        elevation: 4, // Increased elevation for a more prominent shadow
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: BorderSide(
-            color: Colors.grey.shade300, // Subtle border for better contrast
-            width: 1,
-          ),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.grey.shade900
+              : Colors.grey.shade200, // Subtle grey background based on theme
+          borderRadius: BorderRadius.circular(16), // Rounded corners
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1), // Subtle shadow
+              blurRadius: 6,
+              offset: const Offset(2, 2), // Slight offset for depth
+            ),
+          ],
         ),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -278,13 +289,10 @@ class _ParkingMapState extends State<ParkingMap> {
               Container(
                 height: 100,
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade200, // Light gray for contrast
                   borderRadius: BorderRadius.circular(12), // Rounded corners
-                ),
-                child: const Center(
-                  child: Text(
-                    'Image of parking structure',
-                    style: TextStyle(color: Colors.black54),
+                  image: DecorationImage(
+                    image: AssetImage(imagePath), // Placeholder image
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),

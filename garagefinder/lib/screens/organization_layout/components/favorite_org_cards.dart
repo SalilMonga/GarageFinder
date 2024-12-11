@@ -24,78 +24,91 @@ class FavoriteOrganizationCard extends StatelessWidget {
 
           return Padding(
             padding: const EdgeInsets.only(right: 16.0),
-            child: Stack(
-              children: [
-                // Organization Card
-                Container(
-                  width: 200,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 6,
-                        offset: Offset(2, 2),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Organization Image
-                      ClipRRect(
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(12),
-                          topRight: Radius.circular(12),
+            child: GestureDetector(
+              onTap: () {
+                // Navigate to the parking map when a favorite card is tapped
+                Navigator.pushNamed(
+                  context,
+                  '/parking',
+                  arguments: {
+                    'schoolName': org['name'],
+                    'schoolId': org['id'], // Pass the organization ID
+                  },
+                );
+              },
+              child: Stack(
+                children: [
+                  // Organization Card
+                  Container(
+                    width: 200,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).cardColor,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 6,
+                          offset: Offset(2, 2),
                         ),
-                        child: org['image'] != null && org['image'].isNotEmpty
-                            ? Image.network(
-                                org['image'],
-                                height: 80,
-                                width: double.infinity,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    Image.asset(
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Organization Image
+                        ClipRRect(
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(12),
+                            topRight: Radius.circular(12),
+                          ),
+                          child: org['image'] != null && org['image'].isNotEmpty
+                              ? Image.network(
+                                  org['image'],
+                                  height: 80,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      Image.asset(
+                                    'assets/images/placeholder.jpg',
+                                    height: 80,
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
+                              : Image.asset(
                                   'assets/images/placeholder.jpg',
                                   height: 80,
                                   width: double.infinity,
                                   fit: BoxFit.cover,
                                 ),
-                              )
-                            : Image.asset(
-                                'assets/images/placeholder.jpg',
-                                height: 80,
-                                width: double.infinity,
-                                fit: BoxFit.cover,
-                              ),
-                      ),
-                      // Organization Details
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              org['name'] ?? '',
-                              style: Theme.of(context).textTheme.bodyLarge,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              org['location'] ?? 'Unknown Location',
-                              style: Theme.of(context).textTheme.bodySmall,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
                         ),
-                      ),
-                    ],
+                        // Organization Details
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                org['name'] ?? '',
+                                style: Theme.of(context).textTheme.bodyLarge,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                org['location'] ?? 'Unknown Location',
+                                style: Theme.of(context).textTheme.bodySmall,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         },

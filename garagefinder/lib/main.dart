@@ -1,5 +1,4 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:garagefinder/components/theme_notifier.dart';
 import 'package:garagefinder/screens/homepage.dart';
@@ -12,13 +11,6 @@ import 'package:garagefinder/screens/settings_page.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
-  debugPrint = (String? message, {int? wrapWidth}) {
-    // Only show logs explicitly printed by your app
-    if (message != null && message.contains('flutter:')) {
-      debugPrintSynchronously(message, wrapWidth: wrapWidth);
-    }
-  };
-  ;
   WidgetsFlutterBinding.ensureInitialized(); // Ensures Flutter is ready
   await Firebase.initializeApp();
   print('Firebase initialized successfully'); // Initialize Firebase
@@ -57,8 +49,6 @@ class MyApp extends StatelessWidget {
                 // '/organizations': (context) => const OrganizationsPage(),
                 '/settings': (context) => const SettingsPage(),
                 '/garage': (context) => const GarageLayoutPage(),
-                // '/parking': (context) => const ParkingMap(),
-                // '/welcome': (context) => const WelcomePage(firstName: "Salil"),
                 // Add other screens here as needed
               },
               // Handle dynamic routing
