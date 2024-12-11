@@ -9,7 +9,13 @@ class OrganizationState extends ChangeNotifier {
   String searchQuery = '';
   String selectedCategory = '';
   int currentIndex = 0;
-  String userName = 'Salil'; // For WelcomePage
+  String userName = 'Unknown'; // Default value
+
+  void setUserName(String name) {
+    userName = name;
+    notifyListeners(); // Notify listeners when the username is updated
+  }
+
   List<Map<String, dynamic>> organizations = [];
   List<Map<String, dynamic>> favoriteOrganizations = [];
 

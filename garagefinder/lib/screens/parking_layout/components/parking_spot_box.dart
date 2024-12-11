@@ -21,6 +21,7 @@ class ParkingSpotBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -28,27 +29,36 @@ class ParkingSpotBox extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
           color: isReserved
-              ? theme.colorScheme.primary
-                  .withOpacity(0.2) // Subtle primary background
-              : theme.colorScheme.surface, // Default background
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: isSelected
-                ? theme.colorScheme.primary
-                : theme.colorScheme.outline, // Highlight border if selected
-            width: isSelected ? 2 : 1,
-          ),
+              ? theme.colorScheme.primary.withOpacity(0.15) // Reserved look
+              : isSelected
+                  ? theme.colorScheme.primary.withOpacity(0.1) // Selected look
+                  : theme.brightness == Brightness.dark
+                      ? Colors.grey[850] // Dark mode default
+                      : Colors.grey[300], // Light mode default
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            if (isSelected)
+              BoxShadow(
+                color: theme.colorScheme.primary.withOpacity(0.5),
+                offset: const Offset(0, 4),
+                blurRadius: 10,
+              ),
+            if (!isSelected && !isReserved)
+              const BoxShadow(
+                color: Colors.black12,
+                offset: Offset(0, 2),
+                blurRadius: 6,
+              ),
+          ],
         ),
         child: Row(
           children: [
-            Text(
-              _getIcon(type),
-              style: TextStyle(
-                fontSize: 24,
-                color: isReserved
-                    ? theme.colorScheme.primary
-                    : theme.colorScheme.onSurface,
-              ),
+            Icon(
+              _getIcon(type), // Use the updated _getIcon function
+              size: 24,
+              color: isReserved
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.onSurface,
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -79,14 +89,16 @@ class ParkingSpotBox extends StatelessWidget {
     );
   }
 
-  // Get icon based on parking type
-  String _getIcon(String type) {
-    const icons = {
-      'Handicap': '♿',
-      'Motorcycle': '🏍️',
-      'Compact': '🚗',
-      'Standard': '🅿️',
-    };
-    return icons[type] ?? '🅿️';
+  IconData _getIcon(String type) {
+    switch (type) {
+      case 'Handicap':
+        return Icons.accessible; // Wheelchair accessible icon
+      case 'Motorcycle':
+        return Icons.two_wheeler; // Motorcycle icon
+      case 'Compact':
+        return Icons.local_parking; // Parking "P" icon
+      default:
+        return Icons.directions_car; // Default car icon
+    }
   }
 }

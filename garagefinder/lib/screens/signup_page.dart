@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:garagefinder/components/text_field.dart';
 import 'package:garagefinder/components/primary_button.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -26,18 +27,7 @@ class _SignUpPageState extends State<SignUpPage> {
     super.dispose();
   }
 
-  // void _validateAndSignUpWithoutFirebase() {
-  //   if (_formKey.currentState?.validate() ?? false) {
-  //     // Perform sign-up logic here
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(content: Text('Account created successfully!')),
-  //     );
-  //     FocusScope.of(context).unfocus();
-  //     Navigator.pop(context); // Navigate back to login or another page
-  //   }
-  // }
-
-  void _validateAndSignUp() async {
+  Future<void> _validateAndSignUp() async {
     if (_formKey.currentState?.validate() ?? false) {
       try {
         // Create user with email and password
@@ -47,19 +37,27 @@ class _SignUpPageState extends State<SignUpPage> {
           password: _passwordController.text.trim(),
         );
 
-        // Set display name (optional)
-        await userCredential.user
-            ?.updateDisplayName(_usernameController.text.trim());
+        final uid = userCredential.user!.uid;
+        final username = _usernameController.text.trim();
+        final email = _emailController.text.trim();
+
+        // Save user details to Firestore
+        await saveUserToFirestore(uid, username, email);
+
+        // Set display name in Firebase Auth (optional)
+        await userCredential.user?.updateDisplayName(username);
 
         // Show success message
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(
-                  'Welcome, ${_usernameController.text}! Account created successfully.')),
+          const SnackBar(
+            content: Text(
+              'Account created successfully! Please login with your email.',
+            ),
+          ),
         );
 
-        // Navigate to login or next page
-        Navigator.pushNamed(context, '/organizations'); // Update as needed
+        // Navigate to the next page
+        Navigator.pushNamed(context, '/login');
       } on FirebaseAuthException catch (e) {
         String errorMessage;
         if (e.code == 'email-already-in-use') {
@@ -80,9 +78,24 @@ class _SignUpPageState extends State<SignUpPage> {
         // Catch other errors
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-              content: Text('An error occurred. Please try again later.')),
+            content: Text('An error occurred. Please try again later.'),
+          ),
         );
       }
+    }
+  }
+
+  Future<void> saveUserToFirestore(
+      String uid, String username, String email) async {
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(uid).set({
+        'username': username,
+        'email': email,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+      print('User successfully saved to Firestore.');
+    } catch (e) {
+      print('Error saving user to Firestore: $e');
     }
   }
 

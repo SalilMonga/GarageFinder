@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:garagefinder/components/text_field.dart';
@@ -25,18 +26,6 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  // void _validateAndLoginNoFireBase() {
-  //   if (_formKey.currentState?.validate() ?? false) {
-  //     Navigator.push(
-  //       context,
-  //       MaterialPageRoute(
-  //         builder: (context) => const OrganizationsPage(),
-  //       ),
-  //     );
-  //     FocusScope.of(context).unfocus();
-  //   }
-  // }
-
   void _validateAndLogin() async {
     if (_formKey.currentState?.validate() ?? false) {
       try {
@@ -46,23 +35,39 @@ class _LoginPageState extends State<LoginPage> {
           email: _usernameController.text.trim(),
           password: _passwordController.text.trim(),
         );
-
-        // Initialize OrganizationState
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ChangeNotifierProvider(
-              create: (_) => OrganizationState(),
-              child: const HomePage(), // Navigate to the main HomePage
+        print('UserCredentials:$userCredential');
+        final uid =
+            userCredential.user!.uid; // Get the UID of the logged-in user
+        // Fetch user details from Firestore
+        final userDoc =
+            await FirebaseFirestore.instance.collection('users').doc(uid).get();
+        if (userDoc.exists) {
+          print('userDoc:$userDoc.data');
+          // Get the username from the Firestore document
+          final username = userDoc.data()?['username'] ?? 'Unknown User';
+          final formattedUsername = capitalizeFirstLetter(username);
+          // Navigate to HomePage and pass the username to OrganizationState
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ChangeNotifierProvider(
+                create: (_) =>
+                    OrganizationState()..userName = formattedUsername,
+                child: const HomePage(), // Navigate to the main HomePage
+              ),
             ),
-          ),
-        );
+          );
+        } else {
+          // Show error if the user document does not exist
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('User data not found in Firestore.')),
+          );
+        }
       } on FirebaseAuthException catch (e) {
         String errorMessage;
-        if (e.code == 'user-not-found') {
-          errorMessage = 'No user found for that email.';
-        } else if (e.code == 'wrong-password') {
-          errorMessage = 'Wrong password provided for that user.';
+        print('ErrorCode: $e');
+        if (e.code == 'invalid-credential') {
+          errorMessage = 'Invalid Email/Password. Please try again!';
         } else {
           errorMessage =
               'An unexpected error occurred in firebase. Please try again.';
@@ -72,9 +77,20 @@ class _LoginPageState extends State<LoginPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(errorMessage)),
         );
+      } catch (e) {
+        // Handle any other errors
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('An error occurred. Please try again later.')),
+        );
       }
     }
     FocusScope.of(context).unfocus(); // Hide keyboard
+  }
+
+  String capitalizeFirstLetter(String input) {
+    if (input.isEmpty) return input;
+    return input[0].toUpperCase() + input.substring(1);
   }
 
   @override

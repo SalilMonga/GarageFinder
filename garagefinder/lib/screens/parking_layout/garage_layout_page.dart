@@ -103,7 +103,9 @@ class _GarageLayoutPageState extends State<GarageLayoutPage> {
       ),
       body: Column(
         children: [
-          const ParkingHeader(), // Display header
+          const ParkingHeader(
+              imagePath:
+                  'assets/images/mutliLevelParking.jpg'), // Display header
           Expanded(
             child: ParkingSpotList(
               spots: filteredParkingSpots,

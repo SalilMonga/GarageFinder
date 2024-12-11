@@ -121,21 +121,20 @@ class ParkingFilterModal extends StatelessWidget {
                 children: [
                   Expanded(
                     child: PrimaryButton(
-                      text: 'Apply',
-                      onPressed: () {
-                        onApplyFilter(
-                            tempSelectedParkingType, tempSelectedFloor);
-                        Navigator.pop(context);
-                      },
-                    ),
+                        text: 'Clear',
+                        isOutlined: true,
+                        onPressed: () {
+                          onClearFilter();
+                          Navigator.pop(context);
+                        }),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: PrimaryButton(
-                      text: 'Clear',
-                      isOutlined: true,
+                      text: 'Apply',
                       onPressed: () {
-                        onClearFilter();
+                        onApplyFilter(
+                            tempSelectedParkingType, tempSelectedFloor);
                         Navigator.pop(context);
                       },
                     ),

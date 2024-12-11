@@ -27,34 +27,10 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
     });
   }
 
-  // int currentIndex = 0; // Track the current index of the bottom nav
-  // // List<Map<String, String>> favoriteOrganizations = []; // Global favorites list
-  // // Handle Bottom Navigation
-  // void onTabTapped(int index, BuildContext context,
-  //     List<Map<String, dynamic>> favoriteOrganizations) {
-  //   currentIndex = index;
-  //   // notifyListeners();
-  //   if (index == 1) {
-  //     Navigator.push(
-  //       context,
-  //       MaterialPageRoute(
-  //         builder: (context) => const FavoritesPage(
-
-  //             ),
-  //       ),
-  //     );
-  //     // Navigator.pushNamed(context, '/favorites');
-  //   } else if (index == 2) {
-  //     // Navigator.pushNamed(context, '/settings');
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     final state = context.watch<OrganizationState>();
     final pinnedFavorites = state.getPinnedFavorites();
-    // debugPrint(
-    //     'Favorite Organizations in build: ${state.favoriteOrganizations}');
 
     state.initialize(context);
     return Scaffold(
